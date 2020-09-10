@@ -10,7 +10,8 @@ namespace Codewars_Console_vs19
         static void Main(string[] args)
         {
             //// 007 - 6kyu (Find the odd int)
-            Console.WriteLine(find_it(new int[] { 20, 1, -1, 2, -2, 3, 3, 5, 5, 1, 2, 4, 20, 4, -1, -2, 5 }));
+            //Console.WriteLine(find_it(new int[] { 20, 1, -1, 2, -2, 3, 3, 5, 5, 1, 2, 4, 20, 4, -1, -2, 5 }));
+            Console.WriteLine(find_it(new int[] { 20, 1, -1, 2, -2, 3, 3, 5, 5, 1, 2, 4, 20, 4, -1, -2, 5, 32, 83, 3, 3 }));
 
             #region Done
 
