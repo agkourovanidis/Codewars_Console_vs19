@@ -10,9 +10,9 @@ namespace Codewars_Console_vs19
         static void Main(string[] args)
         {
             //// 006 - 6kyu (Split Strings) splits the string into pairs of two characters.
-            //string[] resultArray = SplitStrings_006("abcdef");
+            string[] resultArray = SplitStrings_006("abcdef");
 
-            string[] resultArray = SplitStrings_006("bitcoin take over the world maybe who knows perhaps");
+            //string[] resultArray = SplitStrings_006("bitcoin take over the world maybe who knows perhaps");
 
             foreach (string strLine in resultArray)
             {
