@@ -9,15 +9,8 @@ namespace Codewars_Console_vs19
     {
         static void Main(string[] args)
         {
-            //// 006 - 6kyu (Split Strings) splits the string into pairs of two characters.
-            //string[] resultArray = SplitStrings_006("abcdef");
-
-            string[] resultArray = SplitStrings_006("bitcoin take over the world maybe who knows perhaps");
-
-            foreach (string strLine in resultArray)
-            {
-                Console.WriteLine(strLine);
-            }
+            //// 007 - 6kyu (Find the odd int)
+            Console.WriteLine(find_it(new int[] { 20, 1, -1, 2, -2, 3, 3, 5, 5, 1, 2, 4, 20, 4, -1, -2, 5 }));
 
             #region Done
 
@@ -51,6 +44,58 @@ namespace Codewars_Console_vs19
 
         }
 
+        //// 007 - 6kyu (Find the odd int)
+        public static int find_it(int[] seq)
+        {
+            #region My Solution 02 - add an entry to the collection if it does not exist or delete it if it exists - in the end there is only one - the desired entry
+            HashSet<int> myNums = new HashSet<int>();
+            foreach (int item in seq)
+            {
+                if (myNums.Contains(item))
+                {
+                    myNums.Remove(item);
+                }
+                else
+                {
+                    myNums.Add(item);
+                }
+            }
+            int result = Int32.Parse(string.Join("", myNums));
+
+            return result;
+
+            #endregion
+
+            #region My Solution 01 Create a dict where we count the number of repetitions for each number
+
+            //Dictionary<int, int> numsDict = new Dictionary<int, int>();
+
+            //foreach (int item in seq)
+            //{
+            //    if (!numsDict.ContainsKey(item))
+            //    {
+            //        numsDict.Add(item, 1);
+            //    }
+            //    else
+            //    {
+            //        numsDict[item]++;
+            //    }
+            //}
+            //return (from d in numsDict where d.Value % 2 != 0 select d.Key)
+            //    .FirstOrDefault();
+
+            #endregion
+
+            #region from Site 02
+            //return seq.Aggregate(0, (a, b) => a ^ b);
+            #endregion
+
+            #region from Site 01
+            //return seq.GroupBy(x => x).Single(g => g.Count() % 2 == 1).Key;
+            #endregion
+        }
+
+        #region CodeWars tests
         //// 006 - 6kyu (Split Strings) splits the string into pairs of two characters.
         public static string[] SplitStrings_006(string str)
         {
@@ -145,8 +190,6 @@ namespace Codewars_Console_vs19
 
             #endregion
         }
-
-        #region CodeWars tests
 
         //// 005 - 7kyu (Shortest Word) given a string of words, return the length of the shortest word(s).
         public static int FindShort(string s)
