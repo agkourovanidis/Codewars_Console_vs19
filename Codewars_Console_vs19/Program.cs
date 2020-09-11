@@ -9,21 +9,13 @@ namespace Codewars_Console_vs19
     {
         static void Main(string[] args)
         {
-            //// 006 - 6kyu (Split Strings) splits the string into pairs of two characters.
-            string[] resultArray = SplitStrings_006("abcdef");
-
-            //string[] resultArray = SplitStrings_006("bitcoin take over the world maybe who knows perhaps");
-
-            foreach (string strLine in resultArray)
-            {
-                Console.WriteLine(strLine);
-            }
+            ////// 007 - 6kyu (Find the odd int)
+            Console.WriteLine(find_it(new int[] { 20, 1, -1, 2, -2, 3, 3, 5, 5, 1, 2, 4, 20, 4, -1, -2, 5 }));
 
             #region Done
 
-            //// 006 - 6kyu (Split Strings) splits the string into pairs of two characters.
-            ////string[] resultArray = SplitStrings_006("abcdef");
-
+            ////// 006 - 6kyu (Split Strings) splits the string into pairs of two characters.
+            ////// string[] resultArray = SplitStrings_006("abcdef");
             //string[] resultArray = SplitStrings_006("bitcoin take over the world maybe who knows perhaps");
 
             //foreach (string strLine in resultArray)
@@ -102,7 +94,7 @@ namespace Codewars_Console_vs19
             #endregion
         }
 
-        #region CodeWars tests
+        #region Done CodeWars tests
         //// 006 - 6kyu (Split Strings) splits the string into pairs of two characters.
         public static string[] SplitStrings_006(string str)
         {
