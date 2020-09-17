@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Codewars_Console_vs19
 {
     class Program
     {
+        #region CodeWars tests
         #region 014 - 4kyu (Sum of Intervals) The class is designed to take in an array of values and (NOT WORKING IN VS_15)
 
         static void Main(string[] args)
@@ -330,6 +332,854 @@ namespace Codewars_Console_vs19
 
         #endregion
 
+        #region 013 - 5kyu (PaginationHelper) The class is designed to take in an array of values and 
+        //// an integer indicating how many items will be allowed per each page.
 
+        //static void Main(string[] args)
+        //{
+        //    var helper = new PagnationHelper<int>(new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 }, 12);
+        //    Console.WriteLine($"totalPages: {helper.PageCount}");
+        //    Console.WriteLine($"totalItems: {helper.ItemCount}");
+        //    Console.WriteLine();
+        //    Console.WriteLine($"Items on Page 0 with index -1: {helper.PageItemCount(-1)}");
+
+        //    Console.WriteLine($"Items on Page 1 with index 0: {helper.PageItemCount(0)}");
+        //    Console.WriteLine($"Items on Page 2 with index 1: {helper.PageItemCount(1)}");
+        //    Console.WriteLine($"Items on Page 3 with index 2: {helper.PageItemCount(2)}");
+        //    Console.WriteLine($"Items on Page 4 with index 3: {helper.PageItemCount(3)}");
+        //    Console.WriteLine();
+        //    Console.WriteLine($"Item 0 with index -1 is on Page {helper.PageIndex(-1) + 1} with index: {helper.PageIndex(-1)}");
+        //    Console.WriteLine($"Item 1 with index 0 is on Page {helper.PageIndex(0) + 1} with index: {helper.PageIndex(0)}");
+        //    Console.WriteLine($"Item 4 with index 3 is on Page {helper.PageIndex(3) + 1} with index: {helper.PageIndex(3)}");
+        //    Console.WriteLine($"Item 5 with index 4 is on Page {helper.PageIndex(4) + 1} with index: {helper.PageIndex(4)}");
+
+        //    Console.WriteLine($"Item 6 with index 5 is on Page {helper.PageIndex(5) + 1} with index: {helper.PageIndex(5)}");
+        //    Console.WriteLine($"Item 3 with index 2 is on Page {helper.PageIndex(2) + 1} with index: {helper.PageIndex(2)}");
+        //    Console.WriteLine($"Item 21 with index 20 is on Page {helper.PageIndex(20) + 1} with index: {helper.PageIndex(20)}");
+        //    Console.WriteLine($"Item -9 with index -10 is on Page {helper.PageIndex(-10) + 1} with index: {helper.PageIndex(-10)}");
+
+        //    Console.WriteLine($"Item 12 with index 11 is on Page: {helper.PageIndex(11)}");
+
+
+        //    //var helper = new PagnationHelper<char>(new List<char> { 'a', 'b', 'c', 'd', 'e', 'f' }, 12);
+
+        //    //Console.WriteLine($"totalPages: {helper.PageCount}"); //should == 2
+        //    //Console.WriteLine($"totalItems: {helper.ItemCount}"); //should == 6
+        //    //Console.WriteLine();
+        //    //Console.WriteLine($"Items on Page 1 with index 0: {helper.PageItemCount(0)}");
+        //    //Console.WriteLine($"Items on Page 2 with index 1: {helper.PageItemCount(1)}");
+        //    //Console.WriteLine($"Items on Page 3 with index 2: {helper.PageItemCount(2)}");
+        //    //Console.WriteLine($"Items on Page 4 with index 3: {helper.PageItemCount(3)}");
+        //    //Console.WriteLine();
+        //    //Console.WriteLine($"Item 0 with index -1 is on Page: {helper.PageIndex(-1)}");
+        //    //Console.WriteLine($"Item 1 with index 0 is on Page: {helper.PageIndex(0)}");
+        //    //Console.WriteLine($"Item 4 with index 3 is on Page: {helper.PageIndex(3)}");
+        //    //Console.WriteLine($"Item 5 with index 4 is on Page: {helper.PageIndex(4)}");
+
+        //    //Console.WriteLine($"Item 6 with index 5 is on Page: {helper.PageIndex(5)}");
+        //    //Console.WriteLine($"Item 3 with index 2 is on Page: {helper.PageIndex(2)}");
+        //    //Console.WriteLine($"Item 21 with index 20 is on Page: {helper.PageIndex(20)}");
+        //    //Console.WriteLine($"Item -9 with index -10 is on Page: {helper.PageIndex(-10)}");
+
+        //    //Console.WriteLine($"Item 13 with index 12 is on Page: {helper.PageIndex(12)}");
+        //}
+
+        public class PagnationHelper<T>
+        {
+            // TODO: Complete this class
+
+            private IList<T> _collection { get; set; }
+            int _itemsPerPage { get; set; }
+
+
+            /// <summary>
+            /// Constructor, takes in a list of items and the number of items that fit within a single page
+            /// </summary>
+            /// <param name="collection">A list of items</param>
+            /// <param name="itemsPerPage">The number of items that fit within a single page</param>
+            public PagnationHelper(IList<T> collection, int itemsPerPage)
+            {
+                _collection = collection;
+                _itemsPerPage = itemsPerPage;
+            }
+
+            /// <summary>
+            /// The number of items within the collection
+            /// </summary>
+            public int ItemCount
+            {
+                get
+                {
+                    return _collection.Count;
+                }
+            }
+
+            /// <summary>
+            /// The number of pages
+            /// </summary>
+            public int PageCount
+            {
+                get
+                {
+                    if (ItemCount % _itemsPerPage == 0)
+                    {
+                        return ItemCount / _itemsPerPage;
+                    }
+                    else
+                    {
+                        return (ItemCount / _itemsPerPage) + 1;
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Returns the number of items in the page at the given page index 
+            /// </summary>
+            /// <param name="pageIndex">The zero-based page index to get the number of items for</param>
+            /// <returns>The number of items on the specified page or -1 for pageIndex values that are out of range</returns>
+            public int PageItemCount(int pageIndex)
+            {
+                if (
+                    (ItemCount % _itemsPerPage == 0 && pageIndex + 1 <= PageCount && pageIndex + 1 > 0)
+                    ||
+                    (ItemCount % _itemsPerPage != 0 && pageIndex + 1 < PageCount && pageIndex + 1 > 0)
+                    )
+                {
+                    return _itemsPerPage;
+                }
+                else if (ItemCount % _itemsPerPage != 0 && pageIndex + 1 == PageCount)
+                {
+                    return ItemCount % _itemsPerPage;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+
+            /// <summary>
+            /// Returns the PAGE INDEX of the page containing the item at the given item index.
+            /// </summary>
+            /// <param name="itemIndex">The zero-based index of the item to get the pageIndex for</param>
+            /// <returns>The zero-based page index of the page containing the item at the given item index or -1 if the item index is out of range</returns>
+            public int PageIndex(int itemIndex)
+            {
+                if (itemIndex + 1 < 1 || itemIndex + 1 > ItemCount)
+                {
+                    return -1;
+                }
+                else if ((itemIndex + 1) % _itemsPerPage == 0)
+                {
+                    return ((itemIndex + 1) / _itemsPerPage) - 1;
+                }
+                else
+                {
+                    return (itemIndex + 1) / _itemsPerPage;
+                }
+
+            }
+        }
+        #endregion
+
+        #region 012 - 6kyu (Find the missing letter) Write a method that takes an array of consecutive (increasing) letters as input and that returns the missing letter in the array.
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine(FindMissingLetter(new[] { 'a', 'b', 'c', 'd', 'f' }));
+        //}
+
+        public static char FindMissingLetter(char[] array)
+        {
+            #region from Web
+            for (int i = 0; i < array.Length - 1; i++)
+            {
+                #region for clarify
+                char aa = array[i];
+                char bb = array[i + 1];
+                int cc = bb - aa;
+                int dd = aa + 1;
+
+                //// int to char
+                char ee = (char)dd;
+                #endregion
+
+
+                if (array[i + 1] - array[i] > 1)
+                {
+                    return (char)(array[i] + 1);
+                }
+            }
+
+            return ' ';
+
+            #endregion
+
+            #region My Solution 01
+            //#region Creating an alphabet
+            //List<char> alphabet = new List<char>()
+            //{
+            //    'a',
+            //    'b',
+            //    'c',
+            //    'd',
+            //    'e',
+            //    'f',
+            //    'g',
+            //    'h',
+            //    'i',
+            //    'j',
+            //    'k',
+            //    'l',
+            //    'm',
+            //    'n',
+            //    'o',
+            //    'p',
+            //    'q',
+            //    'r',
+            //    's',
+            //    't',
+            //    'u',
+            //    'v',
+            //    'w',
+            //    'x',
+            //    'y',
+            //    'z',
+            //    'A',
+            //    'B',
+            //    'C',
+            //    'D',
+            //    'E',
+            //    'F',
+            //    'G',
+            //    'H',
+            //    'I',
+            //    'J',
+            //    'K',
+            //    'L',
+            //    'M',
+            //    'N',
+            //    'O',
+            //    'P',
+            //    'Q',
+            //    'R',
+            //    'S',
+            //    'T',
+            //    'U',
+            //    'V',
+            //    'W',
+            //    'X',
+            //    'Y',
+            //    'Z'
+            //};
+            //#endregion
+
+            //int startIndex = alphabet.IndexOf(array.First());
+
+            //List<char> allChars = alphabet.Skip(startIndex).Take(array.Length + 1).ToList();
+
+            //return allChars.Except(array.ToList()).First();
+
+            #endregion
+        }
+        #endregion
+
+        #region 011 - 6kyu (Sort the odd) Your task is to sort ascending odd numbers but even numbers must be on their places
+        //static void Main(string[] args)
+        //{
+        //    foreach (var item in SortArray(new int[] { 5, 3, 1, 8, 0 }))
+        //    {
+        //        Console.WriteLine(item);
+        //    }
+        //}
+
+        public static int[] SortArray(int[] array)
+        {
+            #region My Solution 01
+            int[] OddSorted = array.Where(x => x % 2 == 1).OrderBy(x => x).ToArray();
+
+            int[] newArr = new int[array.Length];
+
+            int currentOdd = 0;
+
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] % 2 == 0)
+                {
+                    newArr[i] = array[i];
+                }
+                else
+                {
+                    newArr[i] = OddSorted[currentOdd];
+                    currentOdd++;
+                }
+            }
+
+            return newArr;
+
+            #endregion
+
+        }
+        #endregion
+
+        #region 010 - 6kyu (Build Tower) Build Tower by the following given argument: number of floors(integer and always greater than 0)
+        //////[
+        //////'     *     ',
+        //////'    ***    ',
+        //////'   *****   ',
+        //////'  *******  ',
+        //////' ********* ',
+        //////'***********'
+        //////]
+
+        //static void Main(string[] args)
+        //{
+        //    foreach (var item in TowerBuilder(50))
+        //    {
+        //        Console.WriteLine(item);
+        //    }
+        //}
+
+        public static string[] TowerBuilder(int nFloors)
+        {
+            #region My Solution 01
+
+            List<string> building = new List<string>();
+
+            for (int i = nFloors; i > 0; i--)
+            {
+                var currFloor = "";
+
+                for (int k = 0; k < nFloors - i; k++)
+                {
+                    currFloor = currFloor + " ";
+                }
+                for (int l = 0; l < i * 2 - 1; l++)
+                {
+                    currFloor = currFloor + "*";
+                }
+                for (int m = 0; m < nFloors - i; m++)
+                {
+                    currFloor = currFloor + " ";
+                }
+
+                building.Add(currFloor);
+            }
+
+            return building.OrderBy(x => x).ToArray();
+
+            #endregion
+
+        }
+        #endregion
+
+        #region 009 - 6kyu (Delete occurrences of an element if it occurs more than n times)
+        //static void Main(string[] args)
+        //{
+        //    foreach (var item in DeleteNth(new int[] { 1, 1, 3, 3, 7, 2, 2, 2, 2 }, 3))
+        //    {
+        //        Console.WriteLine(item);
+        //    }
+        //}
+
+        public static int[] DeleteNth(int[] arr, int x)
+        {
+            #region My Solution 02
+
+            List<int> collection = new List<int>();
+
+            for (int i = 0; i < arr.Length; i++)
+            {
+                if (collection.Where(a => a == arr[i]).Count() < x)
+                {
+                    collection.Add(arr[i]);
+                }
+            }
+
+            return collection.ToArray();
+
+            #endregion
+
+            #region My Solution 01 - not exactly what they want (here I keep only records where the count of that value is less than "x")
+
+            //Dictionary<int, int> numsCount = new Dictionary<int, int>();
+
+            //for (int i = 0; i < arr.Length; i++)
+            //{
+            //    if (!numsCount.ContainsKey(arr[i]))
+            //    {
+            //        numsCount.Add(arr[i], 1);
+            //    }
+            //    else
+            //    {
+            //        numsCount[arr[i]]++;
+            //    }
+            //}
+
+            //List<int> ToDelete = numsCount
+            //    .Where(a => a.Value == x)
+            //    .Select(a => a.Key)
+            //    .ToList();
+
+            //int[] result = new int[3];
+            //result = arr.Where(val => !ToDelete.Contains(val)).ToArray();
+
+            //return result;
+
+            #endregion
+
+            #region from Web
+            //List<int> collection = new List<int>();
+            //collection = arr.Where((t, i) => arr.Take(i + 1).Count(s => s == t) <= x).ToList();
+
+            //return collection.ToArray();
+            #endregion
+        }
+        #endregion
+
+        #region 008 - 5kyu (Moving Zeros To The End) Write an algorithm that takes an array and moves all of the zeros to the end, preserving the order of the other elements.
+        //static void Main(string[] args)
+        //{
+        //    foreach (var item in MoveZeroes(new int[] {1, 2, 0, 1, 0, 1, 0, 3, 0, 1}))
+        //    {
+        //        Console.WriteLine(item);
+        //    }
+        //}
+
+        public static int[] MoveZeroes(int[] arr)
+        {
+            #region My Solution
+            int[] unsorted = arr.Where(x => x != 0).ToArray();
+            int[] newArr = new int[arr.Length];
+
+            for (int i = 0; i < arr.Length; i++)
+            {
+                newArr[i] = (i < unsorted.Length) ? unsorted[i] : 0;
+            }
+
+            return newArr;
+            #endregion
+
+            #region from Web
+            //return arr.OrderBy(x => x == 0).ToArray();
+            #endregion
+        }
+        #endregion
+
+        #region 007 - 6kyu (Find the odd int) Given an array of integers, find the one that appears an odd number of times.
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine(find_it(new int[] { 20, 1, -1, 2, -2, 3, 3, 5, 5, 1, 2, 4, 20, 4, -1, -2, 5 }));
+        //}
+
+        public static int find_it(int[] seq)
+        {
+            #region My Solution 02 - add an entry to the collection if it does not exist, or delete it if it exists - in the end there is only one - the desired entry
+            HashSet<int> myNums = new HashSet<int>();
+            foreach (int item in seq)
+            {
+                if (myNums.Contains(item))
+                {
+                    myNums.Remove(item);
+                }
+                else
+                {
+                    myNums.Add(item);
+                }
+            }
+            int result = Int32.Parse(string.Join("", myNums));
+
+            return result;
+
+            #endregion
+
+            #region My Solution 01 Create a dict where we count the number of repetitions for each number
+
+            //Dictionary<int, int> numsDict = new Dictionary<int, int>();
+
+            //foreach (int item in seq)
+            //{
+            //    if (!numsDict.ContainsKey(item))
+            //    {
+            //        numsDict.Add(item, 1);
+            //    }
+            //    else
+            //    {
+            //        numsDict[item]++;
+            //    }
+            //}
+            //return (from d in numsDict where d.Value % 2 != 0 select d.Key)
+            //    .FirstOrDefault();
+
+            #endregion
+
+            #region from Web 02
+            //return seq.Aggregate(0, (a, b) => a ^ b);
+            #endregion
+
+            #region from Web 01
+            //return seq.GroupBy(x => x).Single(g => g.Count() % 2 == 1).Key;
+            #endregion
+        }
+        #endregion
+
+        #region 006 - 6kyu (Split Strings) splits the string into pairs of two characters.
+        //static void Main(string[] args)
+        //{
+        //    ////string[] resultArray = SplitStrings_006("abcdef");
+
+        //    string[] resultArray = SplitStrings_006("bitcoin take over the world maybe who knows perhaps");
+
+        //    foreach (string strLine in resultArray)
+        //    {
+        //        Console.WriteLine(strLine);
+        //    }
+        //}
+
+        public static string[] SplitStrings_006(string str)
+        {
+            #region Regex (from Web)
+            var test = Regex.Matches(str + "_", @"\D{2}");
+
+            var result = (from d in test.OfType<Match>() select d.Value).ToList();
+
+            return result.ToArray();
+            #region some regular expressions
+            //Рассмотрим вкратце некоторые элементы синтаксиса регулярных выражений:
+
+            //    ^: соответствие должно начинаться в начале строки (например, выражение @"^пр\w*" соответствует слову "привет" в строке "привет мир")
+
+            //    $: конец строки (например, выражение @"\w*ир$" соответствует слову "мир" в строке "привет мир", так как часть "ир" находится в самом конце)
+
+            //    .: знак точки определяет любой одиночный символ (например, выражение "м.р" соответствует слову "мир" или "мор")
+
+            //    *: предыдущий символ повторяется 0 и более раз
+
+            //    +: предыдущий символ повторяется 1 и более раз
+
+            //    ?: предыдущий символ повторяется 0 или 1 раз
+
+            //    \s: соответствует любому пробельному символу
+
+            //    \S: соответствует любому символу, не являющемуся пробелом
+
+            //    \w: соответствует любому алфавитно - цифровому символу
+
+            //    \W: соответствует любому не алфавитно-цифровому символу
+
+            //    \d: соответствует любой десятичной цифре
+
+            //    \D: соответствует любому символу, не являющемуся десятичной цифрой
+
+            //    Это только небольшая часть элементов.Более подробное описание синтаксиса регулярных выражений можно найти на msdn в
+            #endregion
+            #endregion
+
+            #region My Solution 02
+
+            //List<string> newStrArr = new List<string>();
+
+            //for (int i = 0; i < str.Length; i+=2)
+            //{
+            //    newStrArr.Add(i + 1 < str.Length ? str.Substring(i, 2) : (str.Substring(i, 1) + "_"));
+            //}
+
+            //return newStrArr.ToArray();
+
+            #endregion
+
+            #region My Solution 01
+
+            //int newStrLength = (str.Length % 2 == 1) ? (str.Length / 2 + 1) : (str.Length / 2);
+
+            //string[] newStrArr = new string[newStrLength];
+
+            //for (int j = 0; j < newStrArr.Length;)
+            //{
+            //    for (int i = 0; i < str.Length; i++)
+            //    {
+            //        newStrArr[j]= (i + 1 < str.Length) ? (str[i].ToString() + str[i + 1].ToString()) : newStrArr[j] = str[i].ToString() + "_";
+            //        #region то же подробно
+            //        //if (i + 1 < str.Length)
+            //        //{
+            //        //    newStrArr[j] = str[i].ToString() + str[i + 1].ToString();
+            //        //}
+            //        //else
+            //        //{
+            //        //    newStrArr[j] = str[i].ToString() + "_";
+            //        //} 
+            //        #endregion
+
+            //        j++;
+            //        i++;
+            //    }
+            //}
+
+            //return newStrArr;
+
+            #endregion
+
+            #region from Web
+
+            ////// так работает только в vs19
+            ////return Regex.Matches(str + "_", @"\w{2}").Select(x => x.Value).ToArray();
+            ////// так работает и здесь, но удаляет все пробелы
+            //return Regex.Matches(str + "_", @"\w{2}").OfType<Match>().Select(x => x.Value).ToArray();
+
+            #endregion
+        }
+        #endregion
+
+        #region 005 - 7kyu (Shortest Word) given a string of words, return the length of the shortest word(s).
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine(FindShort("bitcoin take over the world maybe who knows perhaps"));
+        //}
+
+        public static int FindShort(string s)
+        {
+            #region My Solution
+            return (from wa in s.Split(new char[] { ' ' }) orderby wa.Length select wa).FirstOrDefault().Count();
+            #endregion
+
+            #region from Web
+            //return s.Split(' ').Min(x => x.Length);
+            #endregion
+        }
+        #endregion
+
+        #region 004 - 7kyu (Ones and Zeros) convert the equivalent binary value to an integer.
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine(binaryArrayToNumber(new int[] { 0, 1, 1, 0 }));
+        //}
+
+        public static int binaryArrayToNumber(int[] BinaryArray)
+        {
+            //// Converting binary string to an Integer
+            int binaryToInteger = Convert.ToInt32(string.Join("", BinaryArray), 2);
+
+            return binaryToInteger;
+        }
+        #endregion
+
+        #region 003 - 7kyu (Binary Addition) - Adds two numbers together and returns their sum in binary
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine(AddBinary(5, 8));
+        //}
+
+        public static string AddBinary(int a, int b)
+        {
+            return Convert.ToString((a + b), 2);
+        }
+
+        #endregion
+
+        #region 002 - 6kyu (Take a Ten Minute Walk)
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine(IsValidWalk(new string[] { "n", "e", "s", "e", "e", "s", "w", "w", "w", "n" }));
+        //}
+        public static bool IsValidWalk(string[] walk)
+        {
+            #region My Solution
+            bool result = false;
+
+            if (walk.Count() == 10
+                &&
+                (walk.Where(x => x == "n").Count() == walk.Where(x => x == "s").Count())
+                &&
+                (walk.Where(x => x == "w").Count() == walk.Where(x => x == "e").Count()))
+            {
+                result = true;
+            }
+
+            return result;
+            #endregion
+
+            #region from Web
+            //return walk.Count(x => x == "n") == walk.Count(x => x == "s") && walk.Count(x => x == "e") == walk.Count(x => x == "w") && walk.Length == 10;
+            #endregion
+        }
+        #endregion
+
+        #region 001 - 6kyu (Decode the Morse code)
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine(Decode("  .... . -.--   .--- ..- -.. .  "));
+        //    //Console.WriteLine(Decode("  ···−−−···")); 
+        //}
+
+        public static string Decode(string morseCode)
+        {
+
+            #region Creating a dictionary with Morse - for testing here (Site uses his Own)
+            Dictionary<string, string> dict = new Dictionary<string, string>()
+            {
+                {"a", string.Concat('.', '-')},
+                {"b", string.Concat('-', '.', '.', '.')},
+                {"c", string.Concat('-', '.', '-', '.')},
+                {"d", string.Concat('-', '.', '.')},
+                {"e", '.'.ToString()},
+                {"f", string.Concat('.', '.', '-', '.')},
+                {"g", string.Concat('-', '-', '.')},
+                {"h", string.Concat('.', '.', '.', '.')},
+                {"i", string.Concat('.', '.')},
+                {"j", string.Concat('.', '-', '-', '-')},
+                {"k", string.Concat('-', '.', '-')},
+                {"l", string.Concat('.', '-', '.', '.')},
+                {"m", string.Concat('-', '-')},
+                {"n", string.Concat('-', '.')},
+                {"o", string.Concat('-', '-', '-')},
+                {"p", string.Concat('.', '-', '-', '.')},
+                {"q", string.Concat('-', '-', '.', '-')},
+                {"r", string.Concat('.', '-', '.')},
+                {"s", string.Concat('.', '.', '.')},
+                {"t", string.Concat('-')},
+                {"u", string.Concat('.', '.', '-')},
+                {"v", string.Concat('.', '.', '.', '-')},
+                {"w", string.Concat('.', '-', '-')},
+                {"x", string.Concat('-', '.', '.', '-')},
+                {"y", string.Concat('-', '.', '-', '-')},
+                {"z", string.Concat('-', '-', '.', '.')},
+                {"0", string.Concat('-', '-', '-', '-', '-')},
+                {"1", string.Concat('.', '-', '-', '-', '-')},
+                {"2", string.Concat('.', '.', '-', '-', '-')},
+                {"3", string.Concat('.', '.', '.', '-', '-')},
+                {"4", string.Concat('.', '.', '.', '.', '-')},
+                {"5", string.Concat('.', '.', '.', '.', '.')},
+                {"6", string.Concat('-', '.', '.', '.', '.')},
+                {"7", string.Concat('-', '-', '.', '.', '.')},
+                {"8", string.Concat('-', '-', '-', '.', '.')},
+                {"9", string.Concat('-', '-', '-', '-', '.')},
+                {"SOS", "···−−−···".ToString()}
+            };
+            #endregion
+
+            #region MY SOLUTION 02
+
+            string ResultWord = "";
+
+            string[] morseWordArray = morseCode.Trim().Split(new[] { "   " }, StringSplitOptions.None);
+
+            for (int i = 0; i < morseWordArray.Length; i++)
+            {
+                string[] WordInMorseLetters = morseWordArray[i].Split(new char[] { ' ' });
+
+                foreach (var morseLetter in WordInMorseLetters)
+                {
+                    //// If using Dictionary from site
+                    // string engLetter = MorseCode.Get(morseLetter);
+                    string engLetter = (from d in dict where d.Value == morseLetter select d.Key)
+                        .FirstOrDefault();
+
+                    ResultWord = ResultWord + engLetter.ToUpper();
+                }
+
+                if (i < morseWordArray.Length - 1)
+                {
+                    ResultWord = ResultWord + " ";
+                }
+            }
+
+            return ResultWord;
+
+            #endregion
+
+            #region  MY SOLUTION 01
+            //string morse = morseCode.Replace("   ", "@");
+            //string morseWrdsPre = morse.Replace(" ", "#");
+            //string morseWrds = morseWrdsPre.Replace(" ", "");
+
+            //string[] morseArr = morseWrds.Split(new char[] { '@' });
+
+            //for (int i = 0; i < morseArr.Length; i++)
+            //{
+            //    string[] StrWrds = morseArr[i].Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
+
+            //    foreach (var wrd in StrWrds)
+            //    {
+            //        string GotWrd = (from d in dict where d.Value == wrd select d.Key)
+            //            .FirstOrDefault()
+            //            .ToString();
+
+            //        ResultWord = ResultWord + GotWrd.ToUpper();
+            //    }
+
+            //    if (i < morseArr.Length - 1)
+            //    {
+            //        ResultWord = ResultWord + " ";
+            //    }
+            //}
+
+            //while (ResultWord.StartsWith(" "))
+            //{
+            //    ResultWord = ResultWord.Remove(0, 1);
+            //}
+
+            //return ResultWord; 
+            #endregion
+
+            #region From Web 02 - one line code!!!
+            //return string.Concat(morseCode.Trim().Replace("   ", "  ").Split().Select(s => s == "" ? " " : MorseCode.Get(s)));
+            #endregion
+
+            #region From Web 01
+
+            //////
+            #region Explanation (from Web splitted)
+            ////// Getting an array splitted by words
+            //string AAAwords = morseCode.Trim(); //// remove all unnecessary spaces at the beginning and the end of the string
+            //string[] Awords = AAAwords.Split(new[] {"   "}, StringSplitOptions.None); //// splitting the string to array BY STRING - NOT BY CHAR (needs StringSplitOptions)
+            //                                                                          /// keeping spaces (not removing unnecessary symbols)
+
+            ////// Splitting Each Word in the above Array into letters
+            //var AtranslatedWords = Awords
+            //    .Select(word => word.Split(' '))
+            //    .ToList();
+
+
+            ////// To use my morse Dictionary - do this way
+            //string ResultWord = "";
+
+            //for (int i = 0; i < AtranslatedWords.Count; i++)
+            //{
+            //    foreach (var wrd in AtranslatedWords[i])
+            //    {
+            //        string GotWrd = (from d in dict where d.Value == wrd select d.Key)
+            //            .FirstOrDefault()
+            //            .ToString();
+
+            //        ResultWord = ResultWord + GotWrd.ToUpper();
+            //    }
+
+            //    if (i < AtranslatedWords.Count - 1)
+            //    {
+            //        ResultWord = ResultWord + " ";
+            //    }
+            //}
+
+            //return ResultWord; 
+            #endregion
+
+            ////////////////////////////////////////////////////////
+            //// Getting the array of letters in morse language
+            //var words = morseCode.Trim() //// remove all unnecessary spaces at the beginning and the end of the string
+            //    .Split(new[] { "   " } //// splitting the string to array BY STRING - NOT BY CHAR
+            //        , StringSplitOptions.None //// keeping spaces (not removing unnecessary symbols)
+            //        );
+
+            ////// translating the array of words to English
+            //var translatedWords = words
+            //    .Select(word => word.Split(' '))
+            //    .Select(letters => string.Join("", letters.Select(MorseCode.Get)))
+            //    .ToList();
+
+            ////// concatenating recieved letters in List, splitting them by space
+            //return string.Join(" ", translatedWords);
+
+            #endregion
+        }
+        #endregion
+        #endregion
     }
 }
