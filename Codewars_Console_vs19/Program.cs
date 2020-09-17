@@ -2,38 +2,261 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace Codewars_Console_vs19
 {
     class Program
     {
-        #region CodeWars tests
-        #region 014 - 4kyu (Sum of Intervals) The class is designed to take in an array of values and (NOT WORKING IN VS_15)
-
+        #region 017 - 5kyu (Valid Parentheses) takes a string of parentheses, and determines if the order of the parentheses is valid
+        
         static void Main(string[] args)
         {
-            //(int, int)[] Interval = new (int, int)[] { (11, 15), (1, 2), (6, 10) };
-            //(int, int)[] Interval = new (int, int)[] { (1, 5), (10, 20), (7, 13), (16, 19), (5, 11) }; 
-            (int, int)[] Interval = new (int, int)[] { (1, 5), (10, 20), (1, 6), (16, 19), (5, 11) }; // 19
-
-            //(int, int)[] Interval = new (int, int)[] { (-2, -1), (-1, 0), (0, 21) };
-            //(int, int)[] Interval = new (int, int)[] { (1, 2), (2, 3), (3, 24) };
-
-            //(int, int)[] Interval = new (int, int)[] { (5, 9), (4, 10) };
-
-            //(int, int)[] Interval = new (int, int)[] { (3, 7), (8, 10), (2, 11) };
-            //(int, int)[] Interval = new (int, int)[] { (6, 10), (11, 13), (2, 4), (14, 17), (5, 18) };
-
-            //(int, int)[] Interval = new (int, int)[] { (-3, 0), (1, 3), (-4, 2) };
-            //(int, int)[] Interval = new (int, int)[] { (6, 8), (-6, -1), (0, 3), (-7, 1) };
-
-            //(int, int)[] Interval = new (int, int)[] { (3041, 8282), (-8428, -799), (-597, 224), (8602, 8932), (5636, 9459), (-1535, 8763), (-9534, -7743), (-6874, 3781), (-9280, 3989), (-6426, -1132), (-241, 2619) }; //18993
-            //(int, int)[] Interval = new (int, int)[] { (3, 6), (7, 8), (4, 9) }; //6
-
-            //(int, int)[] Interval = new (int, int)[] { (0, int.MaxValue) };
-            Console.WriteLine($"The sum of all intervals = {SumIntervals(Interval)}");
+            //Console.WriteLine(ValidParentheses("()"));
+            //Console.WriteLine(ValidParentheses(")(((("));
+            //Console.WriteLine(ValidParentheses(")(()))"));
+            //Console.WriteLine(ValidParentheses("(())((()())())"));
+            //Console.WriteLine(ValidParentheses(")())((()())()("));
+            //Console.WriteLine(ValidParentheses(""));
+            Console.WriteLine(ValidParentheses("iuew647usef7w4%^%&e76337234>{<<{{{{]"));
         }
+
+        #region My Solution
+        public static bool ValidParentheses(string input)
+        {
+            #region Because in these cases must return true - these cases are not needed any more
+            //if (!input.Contains("(") && !input.Contains(")"))
+            //{
+            //    return true;
+            //}
+
+            //if (input == "")
+            //{
+            //    return true;
+            //} 
+            #endregion
+
+            int count = 0;
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (input[i] == '(')
+                {
+                    count++;
+                }
+                else if (input[i] == ')')
+                {
+                    count--;
+                }
+                if (count < 0)
+                {
+                    return false;
+                }
+            }
+
+            if (count == 0)
+            {
+                return true;
+            }
+
+            return false;
+
+        } 
+        #endregion
+        #endregion
+
+        #region CodeWars tests
+        #region 016 - 5kyu (Greed is Good) Your mission is to score a throw according to these rules
+        // Three 1's => 1000 points
+        // Three 6's =>  600 points
+        // Three 5's =>  500 points
+        // Three 4's =>  400 points
+        // Three 3's =>  300 points
+        // Three 2's =>  200 points
+        // One   1   =>  100 points
+        // One   5   =>   50 point
+
+        //static void Main(string[] args)
+        //{
+        //    //Console.WriteLine($"The Score is {Score(new int[] { 2, 3, 4, 6, 2 })}"); //"Should be 0 :-(");
+        //    //Console.WriteLine($"The Score is {Score(new int[] { 4, 4, 4, 3, 3 })}"); // "Should be 400");
+        //    //Console.WriteLine($"The Score is {Score(new int[] { 2, 4, 4, 5, 4 })}"); // "Should be 450");
+        //    //Console.WriteLine($"The Score is {Score(new int[] { 5, 1, 3, 4, 1 })}"); // "Should be 250");
+        //    //Console.WriteLine($"The Score is {Score(new int[] { 1, 1, 1, 3, 1 })}"); // "Should be 1100");
+        //    Console.WriteLine($"The Score is {Score(new int[] { 2, 4, 4, 5, 4 })}"); // "Should be 450");
+        //}
+
+        #region from Web 02
+        public static int Score(int[] dice)
+        {
+            int[] tripleValue = { 0, 1000, 200, 300, 400, 500, 600 };
+            int[] singleValue = { 0, 100, 0, 0, 0, 50, 0 };
+
+            int value = 0;
+            for (int dieSide = 1; dieSide <= 6; dieSide++)
+            {
+                int countRolls = dice.Where(outcome => outcome == dieSide).Count();
+                value += tripleValue[dieSide] * (countRolls / 3) + singleValue[dieSide] * (countRolls % 3);
+            }
+            return value;
+        }
+        #endregion
+
+        #region from Web 01
+        //public static int Score(int[] dice)
+        //{
+        //    #region Original
+        //    //return dice
+        //    //    .GroupBy(d => d)
+        //    //    .Select(g => Points(g.Key, g.Count()))
+        //    //    .Sum(); 
+        //    #endregion
+
+        //    //// Getting Grouped dies
+        //    var groupped = dice
+        //      .GroupBy(d => d)
+        //      .ToList();
+
+        //    foreach (var item in groupped)
+        //    {
+        //        Console.WriteLine($"record with index: {groupped.IndexOf(item)}: die: {item.Key}, appeares {item.Count()} times");
+        //    }
+        //    Console.WriteLine();
+
+        //    //// From Another Method Getting values for each item in list
+        //    /// вызов другого метода внутри linq через лямбда выражение
+        //    var scores = groupped
+        //        .Select(g => Points(g.Key, g.Count()))
+        //        .ToList();
+
+        //    foreach (var item in scores)
+        //    {
+        //        Console.WriteLine($"record with index: {scores.IndexOf(item)}: : {item}");
+        //    }
+
+        //    //// Summing the Got Scores
+        //    int result = scores.Sum();
+        //    Console.WriteLine();
+
+        //    return result;
+        //}
+
+        ////// Function that counts scores for each die
+        //private static int Points(int die, int count)
+        //{
+        //    switch (die)
+        //    {
+        //        case 1:
+        //            return (count / 3) * 1000 + (count % 3) * 100;
+        //        case 5:
+        //            return (count / 3) * 500 + (count % 3) * 50;
+        //        default:
+        //            return (count / 3) * die * 100;
+        //    }
+        //} 
+        #endregion
+
+        #region My Solution
+        //public static int Score(int[] dice)
+        //{
+        //    int score = 0;
+
+        //    if (dice.Where(x => x == 1).Count() >= 3)
+        //    {
+        //        score += 1000;
+        //    }
+        //    else if (dice.Where(x => x == 6).Count() >= 3)
+        //    {
+        //        score += 600;
+        //    }
+        //    else if (dice.Where(x => x == 5).Count() >= 3)
+        //    {
+        //        score += 500;
+        //    }
+        //    else if (dice.Where(x => x == 4).Count() >= 3)
+        //    {
+        //        score += 400;
+        //    }
+        //    else if (dice.Where(x => x == 3).Count() >= 3)
+        //    {
+        //        score += 300;
+        //    }
+        //    else if (dice.Where(x => x == 2).Count() >= 3)
+        //    {
+        //        score += 200;
+        //    }
+
+        //    int OnesCount = dice.Where(x => x == 1).Count();
+        //    if (OnesCount < 3)
+        //    {
+        //        score = score + 100 * OnesCount;
+        //    }
+        //    else if (OnesCount > 3)
+        //    {
+        //        score = score + 100 * (OnesCount - 3);
+        //    }
+
+        //    int FivesCount = dice.Where(x => x == 5).Count();
+        //    if (FivesCount < 3)
+        //    {
+        //        score = score + 50 * FivesCount;
+        //    }
+        //    else if (FivesCount > 3)
+        //    {
+        //        score = score + 50 * (FivesCount - 3);
+        //    }
+
+        //    return score;
+        //} 
+        #endregion
+        #endregion
+
+        #region 015 - 4kyu (Adding Big Numbers) Write a function that returns the sum of two numbers. 
+        ////// The input numbers are strings and the function must return a string.
+        /// Idea is that you are given two strings. Both of these strings represent numbers, which can be potentially very big 
+        /// (like, for example, 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890), 
+        /// so they do not fit into any numeric data type. You have to add them up somehow, however you like, but the addition 
+        /// has to be exact. Then, you return the result also as string, because it will be too big to fit into any numeric type.
+        //// (Should Also change the Test in the buttom to pass.)
+
+        //static void Main(string[] args)
+        //{
+        //    //Console.WriteLine(Add("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890", "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890")); // "444"
+        //    Console.WriteLine(Add("123", "321"));
+        //}
+
+        public static string Add(string a, string b)
+        {
+            return (BigInteger.Parse(a) + BigInteger.Parse(b)).ToString();
+        }
+        #endregion
+
+        #region 014 - 4kyu (Sum of Intervals) The class is designed to take in an array of values and (NOT WORKING IN VS_15)
+
+        //static void Main(string[] args)
+        //{
+        //    //(int, int)[] Interval = new (int, int)[] { (11, 15), (1, 2), (6, 10) };
+        //    //(int, int)[] Interval = new (int, int)[] { (1, 5), (10, 20), (7, 13), (16, 19), (5, 11) }; 
+        //    (int, int)[] Interval = new (int, int)[] { (1, 5), (10, 20), (1, 6), (16, 19), (5, 11) }; // 19
+
+        //    //(int, int)[] Interval = new (int, int)[] { (-2, -1), (-1, 0), (0, 21) };
+        //    //(int, int)[] Interval = new (int, int)[] { (1, 2), (2, 3), (3, 24) };
+
+        //    //(int, int)[] Interval = new (int, int)[] { (5, 9), (4, 10) };
+
+        //    //(int, int)[] Interval = new (int, int)[] { (3, 7), (8, 10), (2, 11) };
+        //    //(int, int)[] Interval = new (int, int)[] { (6, 10), (11, 13), (2, 4), (14, 17), (5, 18) };
+
+        //    //(int, int)[] Interval = new (int, int)[] { (-3, 0), (1, 3), (-4, 2) };
+        //    //(int, int)[] Interval = new (int, int)[] { (6, 8), (-6, -1), (0, 3), (-7, 1) };
+
+        //    //(int, int)[] Interval = new (int, int)[] { (3041, 8282), (-8428, -799), (-597, 224), (8602, 8932), (5636, 9459), (-1535, 8763), (-9534, -7743), (-6874, 3781), (-9280, 3989), (-6426, -1132), (-241, 2619) }; //18993
+        //    //(int, int)[] Interval = new (int, int)[] { (3, 6), (7, 8), (4, 9) }; //6
+
+        //    //(int, int)[] Interval = new (int, int)[] { (0, int.MaxValue) };
+        //    Console.WriteLine($"The sum of all intervals = {SumIntervals(Interval)}");
+        //}
 
         #region from Web 02
         public static int SumIntervals((int, int)[] intervals)
