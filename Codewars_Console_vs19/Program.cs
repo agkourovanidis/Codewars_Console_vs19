@@ -9,18 +9,336 @@ namespace Codewars_Console_vs19
 {
     class Program
     {
-        #region 017 - 5kyu (Valid Parentheses) takes a string of parentheses, and determines if the order of the parentheses is valid
-        
+        #region 018 - 4kyu (Catching Car Mileage Numbers)
+
         static void Main(string[] args)
         {
-            //Console.WriteLine(ValidParentheses("()"));
-            //Console.WriteLine(ValidParentheses(")(((("));
-            //Console.WriteLine(ValidParentheses(")(()))"));
-            //Console.WriteLine(ValidParentheses("(())((()())())"));
-            //Console.WriteLine(ValidParentheses(")())((()())()("));
-            //Console.WriteLine(ValidParentheses(""));
-            Console.WriteLine(ValidParentheses("iuew647usef7w4%^%&e76337234>{<<{{{{]"));
+            //int isInterest = (IsInteresting(999, new List<int>() { 1337, 256 })); // 0
+            //int isInterest = (IsInteresting(3, new List<int>() { 1337, 256 }));     // 0
+            int isInterest = (IsInteresting(1336, new List<int>() { 1337, 256 }));  // 1
+            //int isInterest = (IsInteresting(1337, new List<int>() { 1337, 256 }));  // 2
+            //int isInterest = (IsInteresting(11209, new List<int>() { 1337, 256 })); // 1
+            //int isInterest = (IsInteresting(11211, new List<int>() { 1337, 256 })); // 2
+            //int isInterest = (IsInteresting(8901, new List<int>() { 1337, 256 }));
+
+            switch (isInterest)
+            {
+                case 2:
+                    Console.WriteLine($"HEY, LOOK!!! YOU'VE GOT AN INTERESTING NUMBER ON TABLO");
+                    break;
+                case 1:
+                    Console.WriteLine($"WARNING!!! You are close to an interesting number");
+                    break;
+                default:
+                    Console.WriteLine($"Nothing interesting");
+                    break;
+            }
         }
+        #region from Web 02
+        public static int IsInteresting(int number, List<int> awesomePhrases)
+        {
+            int score = 2;
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (number > 99)
+                {
+                    if (awesomePhrases.Contains(number)) return score;
+                    if (AllEqual(number)) return score;
+                    if (AllFollowingAreZeros(number)) return score;
+                    if (IsPalindrome(number)) return score;
+                    if (IsIncrementing(number)) return score;
+                    if (IsDecrementing(number)) return score;
+                }
+                score = 1;
+                number++;
+            }
+            return 0;
+        }
+
+        private static bool IsDecrementing(int number) => "09876543210".Contains(number.ToString());
+        private static bool IsIncrementing(int number) => "01234567890".Contains(number.ToString());
+        private static bool AllEqual(int number) => number.ToString().Distinct().Count() == 1;
+        private static bool AllFollowingAreZeros(int number) => number.ToString().Skip(1).All(x => x == '0');
+        private static bool IsPalindrome(int number) => number.ToString() == string.Concat(number.ToString().Reverse());
+
+        #endregion
+
+        #region from Web 01
+        //public static int IsInteresting(int number, List<int> awesomePhrases)
+        //{
+        //    return Enumerable.Range(number, 3)
+        //      .Where(x => Interesting(x, awesomePhrases))
+        //      .Select(x => (number - x + 4) / 2)
+        //      .FirstOrDefault();
+        //}
+
+        //private static bool Interesting(int num, List<int> awesome)
+        //{
+        //    if (num < 100) return false;
+        //    var s = num.ToString();
+        //    return awesome.Contains(num)
+        //      || s.Skip(1).All(c => c == '0')
+        //      || s.Skip(1).All(c => c == s[0])
+        //      || "1234567890".Contains(s)
+        //      || "9876543210".Contains(s)
+        //      || s.SequenceEqual(s.Reverse());
+        //}
+        #endregion
+
+        #region My Solution
+        //public static int IsInteresting(int number, List<int> awesomePhrases)
+        //{
+        //    int isInterest = 0;
+
+        //    int currentMillage = number;
+
+        //    int tmp = 1;
+
+        //    int curNumber = number;
+
+        //    #region 06 The digits match one of the values in the awesomePhrases array
+        //    for (int j = 0; j <= 2; j++)
+        //    {
+        //        var awesome = awesomePhrases.Where(x => x == curNumber);
+
+        //        if (awesome.Count() != 0 && j == 0)
+        //        {
+        //            isInterest = 2;
+        //            break;
+        //        }
+        //        else if (awesome.Count() != 0 && j != 0)
+        //        {
+        //            isInterest = 1;
+        //            break;
+        //        }
+
+        //        curNumber++;
+        //    }
+        //    curNumber = 0;
+
+        //    if (isInterest==2)
+        //    {
+        //        return isInterest;
+        //    }
+        //    #endregion
+
+        //    #region 05 The digits are a palindrome: 1221 or 73837
+
+        //    for (int j = 0; j <= 2; j++)
+        //    {
+        //        tmp = 1;
+
+        //        int[] numsArray = new int[(number + j).ToString().Length];
+        //        for (int i = 0; i < (number + j).ToString().Length; i++)
+        //        {
+        //            numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
+        //        }
+
+
+        //        for (int i = 0; i < numsArray.Length - 1; i++)
+        //        {
+        //            if (numsArray[i] == numsArray[numsArray.Length - 1 - i])
+        //            {
+        //                tmp++;
+        //            }
+        //            else
+        //            {
+        //                break;
+        //            }
+        //        }
+
+        //        if (number > 99 && tmp == numsArray.Length && j == 0)
+        //        {
+        //            isInterest = 2;
+        //            break;
+        //        }
+        //        else if (number > 99 && tmp == numsArray.Length && j != 0)
+        //        {
+        //            isInterest = 1;
+        //            break;
+        //        }
+        //    }
+
+        //    if (isInterest == 2)
+        //    {
+        //        return isInterest;
+        //    }
+        //    #endregion
+
+        //    #region 04 The digits are sequential, decrementing‡: 4321
+
+        //    for (int j = 0; j <= 2; j++)
+        //    {
+        //        tmp = 1;
+
+        //        int[] numsArray = new int[(number + j).ToString().Length];
+        //        for (int i = 0; i < (number + j).ToString().Length; i++)
+        //        {
+        //            numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
+        //        }
+
+        //        for (int i = 0; i < numsArray.Length - 1; i++)
+        //        {
+        //            if (numsArray[i] == numsArray[i + 1] + 1)
+        //            {
+        //                tmp++;
+        //            }
+        //            else
+        //            {
+        //                break;
+        //            }
+        //        }
+
+        //        if (number > 99 && tmp == numsArray.Length && j == 0)
+        //        {
+        //            isInterest = 2;
+        //            break;
+        //        }
+        //        else if (number > 99 && tmp == numsArray.Length && j != 0)
+        //        {
+        //            isInterest = 1;
+        //            break;
+        //        }
+        //    }
+
+        //    if (isInterest == 2)
+        //    {
+        //        return isInterest;
+        //    }
+        //    #endregion
+
+        //    #region 03 The digits are sequential, incementing: 1234
+        //    //////// For incrementing sequences, 0 should come after 9, and not before 1, as in 7890
+
+        //    for (int j = 0; j <= 2; j++)
+        //    {
+        //        tmp = 1;
+
+        //        int[] numsArray = new int[(number + j).ToString().Length];
+        //        for (int i = 0; i < (number + j).ToString().Length; i++)
+        //        {
+        //            numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
+        //        }
+
+        //        for (int i = 0; i < numsArray.Length - 1; i++)
+        //        {
+        //            if (i == (numsArray.Length - 2) && numsArray[i + 1] == 0)
+        //            {
+        //                numsArray[i + 1] = 10;
+        //            }
+
+        //            if (numsArray[i] == numsArray[i + 1] - 1)
+        //            {
+        //                tmp++;
+        //            }
+        //            else
+        //            {
+        //                break;
+        //            }
+        //        }
+
+        //        if (number > 99 && tmp == numsArray.Length && j == 0)
+        //        {
+        //            isInterest = 2;
+        //            break;
+        //        }
+        //        else if (number > 99 && tmp == numsArray.Length && j != 0)
+        //        {
+        //            isInterest = 1;
+        //            break;
+        //        }
+        //    }
+        //    if (isInterest == 2)
+        //    {
+        //        return isInterest;
+        //    }
+        //    #endregion
+
+        //    #region 02 Every digit is the same number: 1111
+        //    for (int j = 0; j <= 2; j++)
+        //    {
+        //        tmp = 1;
+
+        //        int[] numsArray = new int[(number + j).ToString().Length];
+        //        for (int i = 0; i < (number + j).ToString().Length; i++)
+        //        {
+        //            numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
+        //        }
+
+        //        for (int i = 0; i < numsArray.Length - 1; i++)
+        //        {
+        //            if (numsArray[i] == numsArray[i + 1])
+        //            {
+        //                tmp++;
+        //            }
+        //            else
+        //            {
+        //                break;
+        //            }
+        //        }
+
+        //        if (number > 99 && tmp == numsArray.Length && j == 0)
+        //        {
+        //            isInterest = 2;
+        //            break;
+        //        }
+        //        else if (number > 99 && tmp == numsArray.Length && j != 0)
+        //        {
+        //            isInterest = 1;
+        //            break;
+        //        }
+        //    }
+        //    if (isInterest == 2)
+        //    {
+        //        return isInterest;
+        //    }
+        //    #endregion
+
+        //    #region 01 Any digit followed by all zeros: 100, 90000
+        //    //// getting the number with nulls-as much as number's length - 1
+        //    int numWithNulls = 1;
+        //    for (int i = 0; i < number.ToString().Length - 1; i++)
+        //    {
+        //        numWithNulls = numWithNulls * 10;
+        //    }
+        //    int interestingNumberExact = (Int32.Parse(number.ToString().First().ToString()) * numWithNulls);
+        //    int interestingNumberClose = ((Int32.Parse(number.ToString().First().ToString()) + 1) * numWithNulls);
+
+        //    if (number > 99 && number == interestingNumberExact)
+        //    {
+        //        isInterest = 2;
+        //    }
+        //    else if (number > 97 && (number + 1 == interestingNumberClose || number + 2 == interestingNumberClose))
+        //    {
+        //        isInterest = 1;
+        //    }
+
+        //    if (isInterest == 2)
+        //    {
+        //        return isInterest;
+        //    }
+        //    #endregion
+
+        //    return isInterest;
+        //}
+        #endregion
+
+        #endregion
+
+        #region CodeWars tests
+        #region 017 - 5kyu (Valid Parentheses) takes a string of parentheses, and determines if the order of the parentheses is valid
+
+        //static void Main(string[] args)
+        //{
+        //    //Console.WriteLine(ValidParentheses("()"));
+        //    //Console.WriteLine(ValidParentheses(")(((("));
+        //    //Console.WriteLine(ValidParentheses(")(()))"));
+        //    //Console.WriteLine(ValidParentheses("(())((()())())"));
+        //    //Console.WriteLine(ValidParentheses(")())((()())()("));
+        //    //Console.WriteLine(ValidParentheses(""));
+        //    Console.WriteLine(ValidParentheses("iuew647usef7w4%^%&e76337234>{<<{{{{]"));
+        //}
 
         #region My Solution
         public static bool ValidParentheses(string input)
@@ -62,11 +380,10 @@ namespace Codewars_Console_vs19
 
             return false;
 
-        } 
+        }
         #endregion
         #endregion
 
-        #region CodeWars tests
         #region 016 - 5kyu (Greed is Good) Your mission is to score a throw according to these rules
         // Three 1's => 1000 points
         // Three 6's =>  600 points
