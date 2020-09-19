@@ -9,31 +9,252 @@ namespace Codewars_Console_vs19
 {
     class Program
     {
-        #region 018 - 4kyu (Catching Car Mileage Numbers)
+        #region 020 - 4kyu (Strip Comments) Complete the solution so that it strips all text that follows any of a set of comment markers passed in.
 
         static void Main(string[] args)
         {
-            //int isInterest = (IsInteresting(999, new List<int>() { 1337, 256 })); // 0
-            //int isInterest = (IsInteresting(3, new List<int>() { 1337, 256 }));     // 0
-            int isInterest = (IsInteresting(1336, new List<int>() { 1337, 256 }));  // 1
-            //int isInterest = (IsInteresting(1337, new List<int>() { 1337, 256 }));  // 2
-            //int isInterest = (IsInteresting(11209, new List<int>() { 1337, 256 })); // 1
-            //int isInterest = (IsInteresting(11211, new List<int>() { 1337, 256 })); // 2
-            //int isInterest = (IsInteresting(8901, new List<int>() { 1337, 256 }));
-
-            switch (isInterest)
-            {
-                case 2:
-                    Console.WriteLine($"HEY, LOOK!!! YOU'VE GOT AN INTERESTING NUMBER ON TABLO");
-                    break;
-                case 1:
-                    Console.WriteLine($"WARNING!!! You are close to an interesting number");
-                    break;
-                default:
-                    Console.WriteLine($"Nothing interesting");
-                    break;
-            }
+            Console.WriteLine(StripComments("apples, pears # and bananas\ngrapes\nbananas !apples", new string[] { "#", "!" }));
+            //Console.WriteLine(StripComments("a #b\nc\nd $e f g", new string[] { "#", "$" }));
         }
+
+        #region from web 03 - интересно как находит символы в строке (linq)
+        public static string StripComments(string text, string[] commentSymbols)
+        {
+            if (string.IsNullOrWhiteSpace(text) || commentSymbols.Length == 0) return string.Empty;
+            var result = new List<string>();
+            var rows = text.Split('\n');
+
+            foreach (var row in rows)
+            {
+                var str = row.TrimEnd();
+                foreach (var symbol in commentSymbols.Where(row.Contains)) //интересно как находит символы в строке (linq)
+                {
+                    var id = str.IndexOf(symbol, StringComparison.Ordinal);
+                    if (id == -1) continue;
+                    str = str.Substring(0, id).Trim();
+                }
+
+                result.Add(str);
+            }
+
+            return string.Join("\n", result);
+        } 
+        #endregion
+        #region from Web 02 - Regex
+        //public static string StripComments(string text, string[] commentSymbols)
+        //{ // [ \t]*([#].*|$)
+        //    string regex = @"[ \t]*([" + string.Join("", commentSymbols) + @"].*|$)";
+        //    return Regex.Replace(text, regex, "", RegexOptions.Multiline);
+        //}
+        #endregion
+
+        #region from Web 01
+        //public static string StripComments(string text, string[] commentSymbols)
+        //{
+        //    string[] texts = text.Split("\n");
+
+        //    string[] lines = text.Split(new[] { "\n" }, StringSplitOptions.None);
+        //    //// делит список сиволами из commentSymbols на подсписки и выбирает первую запись
+        //    lines = lines.Select(x => x.Split(commentSymbols, StringSplitOptions.None).First().TrimEnd()).ToArray();
+        //    return string.Join("\n", lines);
+        //}
+        #endregion
+
+        #region My Solution
+        //public static string StripComments(string text, string[] commentSymbols)
+        //{
+        //    List<string> beginList = text.Split(new[] { "\n" }, StringSplitOptions.None).ToList();
+        //    List<string> newList = new List<string>();
+
+        //    foreach (var item in beginList)
+        //    {
+        //        int FoundSymbols = 0;
+        //        foreach (string symbol in commentSymbols)
+        //        {
+        //            int symbolIndex = item.IndexOf(symbol);
+        //            if (symbolIndex != -1)
+        //            {
+        //                newList.Add(item.Remove(symbolIndex).TrimEnd());
+        //                FoundSymbols++;
+        //            }
+        //        }
+        //        if (FoundSymbols==0)
+        //        {
+        //            newList.Add(item.TrimEnd());
+        //        }                
+        //    }
+
+        //    string result = string.Join("\n", newList);
+
+        //    return result;
+        //}
+        #endregion
+
+        #endregion
+
+        #region CodeWars tests
+        #region 019 - 5kyu (Directions Reduction) Write a function dirReduc which will take an array of strings and 
+        //// returns an array of strings with the needless directions removed (W<->E or S<->N side by side).
+
+        //static void Main(string[] args)
+        //{
+        //    string[] a = new string[] { "NORTH", "SOUTH", "SOUTH", "SOUTH", "EAST", "WEST", "NORTH", "NORTH", "WEST" };
+        //    //string[] a = new string[] { "NORTH", "SOUTH", "SOUTH", "EAST", "WEST", "NORTH", "WEST" };
+        //    //string[] a = new string[] { "SOUTH", "NORTH", "WEST" };
+        //    //string[] a = new string[] { "WEST" };
+
+        //    //string[] a = new string[] { "NORTH", "WEST", "SOUTH", "EAST" };
+
+        //    foreach (var item in dirReduc(a))
+        //    {
+        //        Console.WriteLine(item);
+        //    }
+        //}
+
+        #region from Web 03 (Kozhanov)
+        public static string[] dirReduc(string[] arr)
+        {
+            var direction = string.Join(" ", arr);
+
+            for (var i = 0; i < arr.Length; i++)
+            {
+                direction = Regex.Replace(direction, @"NORTH\s+SOUTH|SOUTH\s+NORTH|EAST\s+WEST|WEST\s+EAST", "");
+            }
+
+            return direction.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+        }
+        #endregion
+
+        #region from Web 02
+        //public static string[] dirReduc(String[] arr)
+        //{
+        //    Dictionary<string, string> oppositeOf = new Dictionary<string, string>()
+        //    {
+        //        {"NORTH", "SOUTH"},
+        //        {"SOUTH", "NORTH"},
+        //        {"EAST", "WEST"},
+        //        {"WEST", "EAST"}
+        //    };
+
+        //    List<string> betterDirections = new List<string>();
+        //    foreach (var direction in arr)
+        //    {
+        //        var ss = oppositeOf[direction];
+
+        //        if (betterDirections.LastOrDefault() == oppositeOf[direction])
+        //        {
+        //            betterDirections.RemoveAt(betterDirections.Count - 1);
+        //        }
+        //        else
+        //        {
+        //            betterDirections.Add(direction);
+        //        }
+        //    }
+        //    return betterDirections.ToArray();
+        //}
+        #endregion
+
+        #region from Web 01
+        //public static String[] dirReduc(String[] arr)
+        //{
+        //    Stack<String> stack = new Stack<String>();
+
+        //    foreach (String direction in arr)
+        //    {
+        //        String lastElement = stack.Count > 0 ? stack.Peek().ToString() : null;
+
+        //        switch (direction)
+        //        {
+        //            case "NORTH": if ("SOUTH".Equals(lastElement)) { stack.Pop(); } else { stack.Push(direction); } break;
+        //            case "SOUTH": if ("NORTH".Equals(lastElement)) { stack.Pop(); } else { stack.Push(direction); } break;
+        //            case "EAST": if ("WEST".Equals(lastElement)) { stack.Pop(); } else { stack.Push(direction); } break;
+        //            case "WEST": if ("EAST".Equals(lastElement)) { stack.Pop(); } else { stack.Push(direction); } break;
+        //        }
+        //    }
+        //    String[] result = stack.ToArray();
+        //    Array.Reverse(result);
+
+        //    return result;
+        //}
+        #endregion
+
+        #region My Solution
+        //public static string[] dirReduc(String[] arr)
+        //{
+        //    List<string> newRecs = new List<string>();
+
+        //    string[] newarr = arr;
+
+        //    for (int a = 0; a < newarr.Length; a++)
+        //    {
+        //        newRecs.Clear();
+
+        //        if (newarr.Length == 1)
+        //        {
+        //            newRecs.Add(newarr[0]);
+        //        }
+        //        else
+        //        {
+        //            for (int i = 0; i < newarr.Length - 1; i++)
+        //            {
+        //                if (
+        //                    newarr[i] == "NORTH" && newarr[i + 1] == "SOUTH"
+        //                    ||
+        //                    newarr[i] == "SOUTH" && newarr[i + 1] == "NORTH"
+        //                    ||
+        //                    newarr[i] == "EAST" && newarr[i + 1] == "WEST"
+        //                    ||
+        //                    newarr[i] == "WEST" && newarr[i + 1] == "EAST"
+        //                    )
+        //                {
+        //                    i++;
+        //                }
+        //                else
+        //                {
+        //                    newRecs.Add(newarr[i]);
+        //                }
+
+        //                if (i == newarr.Length - 2)
+        //                {
+        //                    newRecs.Add(newarr[i + 1]);
+        //                }
+        //            }
+        //        }
+
+        //        newarr= newRecs.ToArray();                
+        //    }
+
+        //    return newRecs.ToArray();
+        //}
+        #endregion
+        #endregion
+
+        #region 018 - 4kyu (Catching Car Mileage Numbers)
+
+        //static void Main(string[] args)
+        //{
+        //    //int isInterest = (IsInteresting(999, new List<int>() { 1337, 256 })); // 0
+        //    //int isInterest = (IsInteresting(3, new List<int>() { 1337, 256 }));     // 0
+        //    int isInterest = (IsInteresting(102, new List<int>() { 1337, 256 }));  // 1
+        //    //int isInterest = (IsInteresting(1337, new List<int>() { 1337, 256 }));  // 2
+        //    //int isInterest = (IsInteresting(11209, new List<int>() { 1337, 256 })); // 1
+        //    //int isInterest = (IsInteresting(11211, new List<int>() { 1337, 256 })); // 2
+        //    //int isInterest = (IsInteresting(8901, new List<int>() { 1337, 256 }));
+
+        //    switch (isInterest)
+        //    {
+        //        case 2:
+        //            Console.WriteLine($"HEY, LOOK!!! YOU'VE GOT AN INTERESTING NUMBER ON TABLO");
+        //            break;
+        //        case 1:
+        //            Console.WriteLine($"WARNING!!! You are close to an interesting number");
+        //            break;
+        //        default:
+        //            Console.WriteLine($"Nothing interesting");
+        //            break;
+        //    }
+        //}
+
         #region from Web 02
         public static int IsInteresting(int number, List<int> awesomePhrases)
         {
@@ -326,7 +547,6 @@ namespace Codewars_Console_vs19
 
         #endregion
 
-        #region CodeWars tests
         #region 017 - 5kyu (Valid Parentheses) takes a string of parentheses, and determines if the order of the parentheses is valid
 
         //static void Main(string[] args)
@@ -1723,3 +1943,51 @@ namespace Codewars_Console_vs19
         #endregion
     }
 }
+#region ПРИМЕРЫ
+#region строку string проще делить так:
+//string[] texts = text.Split("\n");
+
+////это стандартный вариант:
+//string[] texts = text.Split(new[] { "\n" }, StringSplitOptions.None))
+#endregion
+
+#region заменить запись в списке (если в цикле, то ломается коллекция и получаем исключение)
+//beginList[beginList.FindIndex(ind=>ind.Equals(item))] = item.Remove(symbolIndex).Trim();
+#endregion
+
+#region добавляю-убираю записи
+//HashSet<string> myStrings = new HashSet<string>();
+//foreach (string item in arr)
+//{
+//    if (item == "NORTH" && myStrings.Contains("SOUTH"))
+//    {
+//        myStrings.Remove("SOUTH");
+//    }
+//    else if (item == "SOUTH" && myStrings.Contains("NORTH"))
+//    {
+//        myStrings.Remove("NORTH");
+//    }
+//    else if (item == "EAST" && myStrings.Contains("WEST"))
+//    {
+//        myStrings.Remove("WEST");
+//    }
+//    else if (item == "WEST" && myStrings.Contains("EAST"))
+//    {
+//        myStrings.Remove("EAST");
+//    }
+//    else
+//    {
+//        myStrings.Add(item);
+//    }
+//}
+////int result = Int32.Parse(string.Join("", myStrings)); 
+#endregion
+
+#region пример группировки с подсчетом
+//var groupped = arr
+//        .GroupBy(d => d)
+//        .Select(g => new { name = g.Key, count = g.Count() })
+//        .ToList();
+#endregion
+
+#endregion
