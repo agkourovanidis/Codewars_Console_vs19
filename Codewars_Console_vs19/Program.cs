@@ -9,13 +9,228 @@ namespace Codewars_Console_vs19
 {
     class Program
     {
-        #region 020 - 4kyu (Strip Comments) Complete the solution so that it strips all text that follows any of a set of comment markers passed in.
+        #region 021 - 4kyu (parseInt() reloaded) Convert a string into an integer. The strings simply represent the numbers in words.
 
         static void Main(string[] args)
         {
-            Console.WriteLine(StripComments("apples, pears # and bananas\ngrapes\nbananas !apples", new string[] { "#", "!" }));
-            //Console.WriteLine(StripComments("a #b\nc\nd $e f g", new string[] { "#", "$" }));
+            Console.WriteLine(ParseInt("five million six hundred eighty nine thousand four hundred twenty-seven"));
+            //Console.WriteLine(ParseInt("five million six lakh eighty nine thousand four hundred twenty-seven"));
+
+            //Console.WriteLine(ParseInt("thirty-five million six hundred sixty-six thousand six hundred sixty-six"));
+            //Console.WriteLine(ParseInt("six hundred sixty six thousand six hundred sixty-six"));
         }
+
+        #region from Web 02 - RegEx
+        //private static Dictionary<string, int> numberTable =
+        //new Dictionary<string, int>
+        //{{"zero",0},{"one",1},{"two",2},{"three",3},{"four",4},
+        //    {"five",5},{"six",6},{"seven",7},{"eight",8},{"nine",9},
+        //    {"ten",10},{"eleven",11},{"twelve",12},{"thirteen",13},
+        //    {"fourteen",14},{"fifteen",15},{"sixteen",16},
+        //    {"seventeen",17},{"eighteen",18},{"nineteen",19},{"twenty",20},
+        //    {"thirty",30},{"forty",40},{"fifty",50},{"sixty",60},
+        //    {"seventy",70},{"eighty",80},{"ninety",90},{"hundred",100},
+        //    {"thousand",1000},{"million",1000000}};
+
+        //public static int ParseInt(string s)
+        //{
+        //    var numbers = Regex.Matches(s, @"\w+").Cast<Match>()
+        //         .Select(m => m.Value.ToLowerInvariant())
+        //         .Where(v => numberTable.ContainsKey(v))
+        //         .Select(v => numberTable[v]);
+        //    int acc = 0, total = 0;
+        //    foreach (var n in numbers)
+        //    {
+        //        if (n >= 1000)
+        //        {
+        //            total += (acc * n);
+        //            acc = 0;
+        //        }
+        //        else if (n >= 100)
+        //        {
+        //            acc *= n;
+        //        }
+        //        else acc += n;
+        //    }
+        //    return (total + acc);
+        //}
+        #endregion
+
+        #region from Web 01
+        static Dictionary<string, int> numbers = new Dictionary<string, int> { {"zero", 0 }, { "one", 1 }, { "two", 2 }, { "three", 3 }, { "four", 4 }, { "five", 5 },
+         { "six", 6 }, { "seven", 7 }, { "eight", 8 }, { "nine", 9 }, { "ten", 10 }, { "eleven", 11 }, { "twelve", 12 }, { "thirteen", 13 }, { "fourteen", 14  }, { "fifteen", 15 },
+         { "sixteen", 16}, { "seventeen", 17 }, { "eighteen", 18 }, { "nineteen", 19 }, { "twenty", 20 }, { "thirty", 30 }, { "forty", 40 }, { "fifty", 50 },
+         { "sixty", 60 }, { "seventy", 70 }, { "eighty", 80 }, { "ninety", 90 } };
+
+        static Dictionary<string, int> multipliers = new Dictionary<string, int> { { "hundred", 100 }, { "thousand", 1000 }, { "million", 1000000 } };
+
+        public static int ParseInt(string s)
+        {
+            s = s.Replace(" and ", " ").Replace("-", " ");
+            int result = 0;
+            var list = s.Split(' ');
+            int multiplier = 1;
+            for (int i = list.Length - 1; i >= 0; i--)
+            {
+                if (numbers.ContainsKey(list[i]))
+                    result += (numbers[list[i]] * multiplier);
+                else if (multipliers.ContainsKey(list[i]))
+                {
+                    if (multiplier < multipliers[list[i]])
+                        multiplier = multipliers[list[i]];
+                    else
+                        multiplier *= multipliers[list[i]];
+                }
+            }
+            return result;
+        }
+        #endregion
+
+        #region My Solution
+        //public static int ParseInt(string s)
+        //{
+        //    #region Creatting a dictionary with Numbers and Letters
+        //    Dictionary<string, int> dict = new Dictionary<string, int>()
+        //    {
+        //        {"zero", 0},
+        //        {"one", 1},
+        //        {"two", 2},
+        //        {"three", 3},
+        //        {"four", 4},
+        //        {"five", 5},
+        //        {"six", 6},
+        //        {"seven", 7},
+        //        {"eight", 8},
+        //        {"nine", 9},
+        //        {"ten", 10},
+
+        //        {"eleven",11},
+        //        {"twelve",12},
+        //        {"thirteen",13},
+        //        {"fourteen",14},
+        //        {"fifteen",15},
+        //        {"sixteen",16},
+        //        {"seventeen",17},
+        //        {"eighteen",18},
+        //        {"nineteen",19},
+
+        //        {"twenty",20},
+        //        {"thirty",30},
+        //        {"forty",40},
+        //        {"fifty",50},
+        //        {"sixty",60},
+        //        {"seventy",70},
+        //        {"eighty",80},
+        //        {"ninety",90},
+
+        //        {"hundred",100},
+
+        //        {"thousand",1000},
+
+        //        {"lakh",100000},
+
+        //        {"million",1000000}
+        //    };
+        //    #endregion
+
+        //    s = s.Replace(" and", "");
+
+        //    //// 01 splitting into parts
+        //    Dictionary<string, string> splitted = new Dictionary<string, string>();
+        //    for (int i = 0; i < s.Length; i++)
+        //    {
+        //        if (s.Contains("million"))
+        //        {
+
+        //            splitted.Add("million", s.Split("million")[0]+ "million".Trim());
+        //            s = s.Split("million")[1].Trim();
+        //        }
+        //        else if (s.Contains("thousand"))
+        //        {
+        //            splitted.Add("thousand", s.Split("thousand")[0] + "thousand".Trim());
+        //            s = s.Split("thousand")[1].Trim();
+        //        }
+        //        else if (s.Contains("hundred"))
+        //        {
+        //            splitted.Add("hundred", s.Split("hundred")[0] + "hundred".Trim());
+        //            s = s.Split("hundred")[1].Trim();
+        //        }
+        //        else
+        //        {
+        //            splitted.Add("dcds", s.Trim() + " one");
+        //            s = "";
+        //        }
+
+        //    }
+
+        //    //// 02 continue
+        //    List<string> numList = new List<string>();
+        //    foreach (var item in splitted)
+        //    {
+        //        numList.Add(item.Value);
+        //    }
+
+        //    var ssss = numList.Select(x => x.Split(" ")).ToList();
+
+        //    //// getting the array in numbers
+        //    List<int> numsArray = new List<int>();
+        //    foreach (var item in ssss)
+        //    {
+        //        List<int> tmp = new List<int>();
+
+        //        for (int i = 0; i < item.Count(); i++)
+        //        {
+        //            if (item[i].Contains("-"))
+        //            {
+        //                string[] tmpArray = item[i].Split("-");
+        //                string frstNum = dict.Where(x => x.Key.ToUpper() == tmpArray[0].ToUpper()).Select(a => a.Value).First().ToString().Remove(1);
+        //                tmp.Add(Int32.Parse(frstNum + dict.Where(x => x.Key.ToUpper() == tmpArray[1].ToUpper()).Select(a => a.Value).First().ToString()));
+        //            }
+        //            else
+        //            {
+        //                tmp.Add(Int32.Parse(dict.Where(x => x.Key.ToUpper() == item[i].ToUpper()).Select(a => a.Value).First().ToString()));
+        //            }
+        //        }
+
+        //        List<int> TmpList = new List<int>();
+        //        for (int i = 0; i < tmp.Count-1; i++)
+        //        {
+        //            //// если последняя запись
+        //            if (i == tmp.Count() - 2)
+        //            {
+        //                TmpList.Add(tmp[i]);
+        //            }
+        //            //// если в записи 1 цифра
+        //            else if (tmp[i + 1].ToString().Length == 1)
+        //            {
+        //                var newNum = (tmp[i] + tmp[i + 1]);
+        //                TmpList.Add(newNum);
+        //                i++;
+        //            }
+        //            else
+        //            {
+        //                var newNum = tmp[i] * tmp[i + 1];
+        //                TmpList.Add(newNum);
+        //                i++;
+        //            }
+        //        }
+
+        //        numsArray.Add(TmpList.Sum() * tmp.Last());
+        //    }
+
+        //    return numsArray.Sum();
+        //}
+        #endregion
+        #endregion
+
+        #region CodeWars tests
+        #region 020 - 4kyu (Strip Comments) Complete the solution so that it strips all text that follows any of a set of comment markers passed in.
+
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine(StripComments("apples, pears # and bananas\ngrapes\nbananas !apples", new string[] { "#", "!" }));
+        //    //Console.WriteLine(StripComments("a #b\nc\nd $e f g", new string[] { "#", "$" }));
+        //}
 
         #region from web 03 - интересно как находит символы в строке (linq)
         public static string StripComments(string text, string[] commentSymbols)
@@ -38,8 +253,9 @@ namespace Codewars_Console_vs19
             }
 
             return string.Join("\n", result);
-        } 
+        }
         #endregion
+
         #region from Web 02 - Regex
         //public static string StripComments(string text, string[] commentSymbols)
         //{ // [ \t]*([#].*|$)
@@ -92,7 +308,6 @@ namespace Codewars_Console_vs19
 
         #endregion
 
-        #region CodeWars tests
         #region 019 - 5kyu (Directions Reduction) Write a function dirReduc which will take an array of strings and 
         //// returns an array of strings with the needless directions removed (W<->E or S<->N side by side).
 
