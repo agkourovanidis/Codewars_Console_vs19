@@ -9,16 +9,2146 @@ namespace Codewars_Console_vs19
 {
     class Program
     {
-        #region 021 - 4kyu (parseInt() reloaded) Convert a string into an integer. The strings simply represent the numbers in words.
+        #region 022 - 3kyu (Battleship field validator) Write a method that takes a field for well-known board game 
+        //// "Battleship" as an argument and returns true if it has a valid disposition of ships, false otherwise.
 
         static void Main(string[] args)
         {
-            Console.WriteLine(ParseInt("five million six hundred eighty nine thousand four hundred twenty-seven"));
-            //Console.WriteLine(ParseInt("five million six lakh eighty nine thousand four hundred twenty-seven"));
+            int[,] field = new int[10, 10]
+                     {{1, 0, 0, 0, 0, 1, 1, 0, 0, 0},
+                      {1, 0, 1, 0, 0, 0, 0, 0, 1, 0},
+                      {1, 0, 1, 0, 1, 1, 1, 0, 1, 0},
+                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                      {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+                      {0, 0, 0, 0, 1, 1, 1, 0, 0, 0},
+                      {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+                      {0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
+                      {0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
+                      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
-            //Console.WriteLine(ParseInt("thirty-five million six hundred sixty-six thousand six hundred sixty-six"));
-            //Console.WriteLine(ParseInt("six hundred sixty six thousand six hundred sixty-six"));
+            Console.WriteLine(ValidateBattlefield(field));
         }
+
+        #region from Web 02
+        //private static Dictionary<int, int> _sizes = new Dictionary<int, int>
+        //{
+        //{1, 4},
+        //{2, 3},
+        //{3, 2},
+        //{4, 1}
+        //};
+
+        //public static bool ValidateBattlefield(int[,] field)
+        //{
+        //    bool Check(int i, int j)
+        //    {
+        //        if (j < 0 || field[i, j] == 0) return true;
+
+        //        var nextRow = i + 1;
+        //        return Check(nextRow, j + 1) && Check(nextRow, j - 1);
+        //    }
+
+        //    int CheckByRow(int i, int j)
+        //    {
+        //        if (field[i, j] != 1 || j > 9) return 0;
+
+        //        field[i, j] = -1;
+        //        return 1 + CheckByRow(i, ++j);
+        //    }
+
+        //    int CheckByColumn(int i, int j)
+        //    {
+        //        if (field[i, j] != 1 || i > 9) return 0;
+
+        //        field[i, j] = -1;
+        //        return 1 + CheckByColumn(++i, j);
+        //    }
+
+        //    for (var i = 0; i < 9; i++)
+        //    {
+        //        for (var j = 0; j < 9; j++)
+        //        {
+        //            if (field[i, j] != 1) continue;
+        //            if (!Check(i, j)) return false;
+
+        //            var nextRow = i + 1;
+        //            var nextColumn = j + 1;
+        //            var length = 1;
+
+        //            if (field[i, nextColumn] == 1)
+        //            {
+        //                length += CheckByRow(i, nextColumn);
+        //            }
+        //            else if (field[nextRow, j] == 1)
+        //            {
+        //                length += CheckByColumn(nextRow, j);
+        //            }
+
+        //            _sizes[length]--;
+        //            if (_sizes[length] < 0) return false;
+        //        }
+        //    }
+
+        //    return true;
+        //}
+        #endregion
+
+        #region from Web 01
+        //public static bool ValidateBattlefield(int[,] field)
+        //{
+        //    var ships = new List<int>();
+        //    for (var x = 0; x < 10; x++)
+        //        for (var y = 0; y < 10; y++)
+        //            if (field[x, y] == 1)
+        //            {
+        //                var length = 1;
+        //                while (x + length < 10 && field[x + length, y] == 1)
+        //                    field[x + length++, y] = 0;
+        //                while (y + length < 10 && field[x, y + length] == 1)
+        //                    field[x, y + length++] = 0;
+        //                ships.Add(length);
+        //            }
+        //    ships.Sort();
+        //    return string.Join("", ships) == "1111222334";
+        //}
+        #endregion
+
+        #region My Solution 01
+        public static bool ValidateBattlefield(int[,] field)
+        {
+            #region пример заполнения из параметра
+            //for (int i = 0; i < field.GetLength(0); i++)
+            //{
+            //    for (int j = 0; j < field.GetLength(1); j++)
+            //    {
+            //        Console.Write("{0,2}", field[i, j]);
+            //    }
+            //    Console.WriteLine();
+            //}
+            //Console.WriteLine(); 
+            #endregion
+
+            ////////////////////////////
+            int hight = field.GetLength(0);
+            int width = field.GetLength(1);
+
+            int[,] pole = field;
+
+            //Dictionary<int, int> shablon = new Dictionary<int, int>();
+            //shablon.Add(1, 8);
+            //shablon.Add(2, 3);
+            //shablon.Add(3, 2);
+            //shablon.Add(4, 1);
+            //// или так
+            Dictionary<int, int> shablon = new Dictionary<int, int>
+            {
+            {1, 8},
+            {2, 3},
+            {3, 2},
+            {4, 1}
+            };
+
+            #region Filling Horizontal Ships
+            Dictionary<int, int> allShipsHorizDict = new Dictionary<int, int>();
+            for (int i = 0; i < hight; i++)
+            {
+                int shipHorizCells = 0;
+
+                for (int j = 0; j < width; j++)
+                {
+                    Console.Write($"{pole[i, j]} ");
+
+                    //// Если есть
+                    if (pole[i, j] == 1)
+                    {
+                        shipHorizCells++;
+
+                        #region Если верхний левый
+                        if (i == 0 && j == 0)
+                        {
+                            #region IF ERRORS
+                            if (//// if conners ocupied
+                                (pole[i, j] == pole[i + 1, j + 1])
+                                ||
+                                //// if right and down or down and left ocupied                            
+                                (pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                pole[i, j] == pole[i + 1, j])) // down                            
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i + 1, j] == 0) // down                            
+                            {
+                                if (shipHorizCells > 0)
+                                {
+                                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                                    {
+                                        allShipsHorizDict.Add(shipHorizCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsHorizDict[shipHorizCells]++;
+                                    }
+                                }
+                                shipHorizCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+                        #region Если верхний правый
+                        else if (i == 0 && j == 9)
+                        {
+                            #region IF ERRORS
+                            if (//// if conners ocupied
+                                (pole[i, j] == pole[i + 1, j - 1])
+                                ||
+                                //// if right and down or down and left ocupied                            
+                                (pole[i, j] == pole[i, j - 1] // left
+                                &&
+                                pole[i, j] == pole[i + 1, j])) // down                            
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (pole[i, j - 1] == 0 // right
+                                &&
+                                pole[i + 1, j] == 0) // down                            
+                            {
+                                if (shipHorizCells > 0)
+                                {
+                                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                                    {
+                                        allShipsHorizDict.Add(shipHorizCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsHorizDict[shipHorizCells]++;
+                                    }
+                                }
+                                shipHorizCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+                        #region Если верхний средний
+                        else if (i == 0)
+                        {
+                            #region IF ERRORS
+                            if (
+                                //// if conners ocupied
+                                (pole[i, j] == pole[i + 1, j + 1]
+                                ||
+                                pole[i, j] == pole[i + 1, j - 1])
+                                ||
+                                //// if right and down or down and left ocupied
+                                ((pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                pole[i, j] == pole[i + 1, j]) // down                                                                        
+                                ||
+                                (pole[i, j] == pole[i + 1, j] // down                                    
+                                &&
+                                pole[i, j] == pole[i, j - 1])) // left
+                                )
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (
+                                pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i, j - 1] == 0 // left
+                                &&
+                                pole[i + 1, j] == 0 // down
+                                )
+                            {
+                                if (shipHorizCells > 0)
+                                {
+                                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                                    {
+                                        allShipsHorizDict.Add(shipHorizCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsHorizDict[shipHorizCells]++;
+                                    }
+                                }
+                                shipHorizCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+
+                        #region Если нижний левый
+                        else if (i == 9 && j == 0)
+                        {
+                            #region IF ERRORS
+                            if (//// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j + 1])
+                                ||
+                                //// if right and down or down and left ocupied                            
+                                (pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                pole[i, j] == pole[i - 1, j])) // up                            
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i - 1, j] == 0) // up                            
+                            {
+                                if (shipHorizCells > 0)
+                                {
+                                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                                    {
+                                        allShipsHorizDict.Add(shipHorizCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsHorizDict[shipHorizCells]++;
+                                    }
+                                }
+                                shipHorizCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+                        #region Если нижний правый
+                        else if (i == 9 && j == 9)
+                        {
+                            #region IF ERRORS
+                            if (//// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j - 1])
+                                ||
+                                //// if right and down or down and left ocupied                            
+                                (pole[i, j] == pole[i, j - 1] // left
+                                &&
+                                pole[i, j] == pole[i - 1, j])) // up                            
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (pole[i, j - 1] == 0 // left
+                                &&
+                                pole[i - 1, j] == 0) // up                            
+                            {
+                                if (shipHorizCells > 0)
+                                {
+                                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                                    {
+                                        allShipsHorizDict.Add(shipHorizCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsHorizDict[shipHorizCells]++;
+                                    }
+                                }
+                                shipHorizCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+                        #region Если нижний средний
+                        else if (i == 9)
+                        {
+                            #region IF ERRORS
+                            if (
+                                //// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j - 1]
+                                ||
+                                pole[i, j] == pole[i - 1, j + 1])
+                                ||
+                                //// if right and down or down and left ocupied
+                                ((pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                pole[i, j] == pole[i - 1, j]) // up                                                                        
+                                ||
+                                (pole[i, j] == pole[i - 1, j] // up                                    
+                                &&
+                                pole[i, j] == pole[i, j - 1])) // left
+                                )
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (
+                                pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i, j - 1] == 0 // left
+                                &&
+                                pole[i - 1, j] == 0 // up
+                                )
+                            {
+                                if (shipHorizCells > 0)
+                                {
+                                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                                    {
+                                        allShipsHorizDict.Add(shipHorizCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsHorizDict[shipHorizCells]++;
+                                    }
+                                }
+                                shipHorizCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+
+                        #region Если левый средний
+                        else if (j == 0)
+                        {
+                            #region IF ERRORS
+                            if (
+                                //// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j + 1]
+                                ||
+                                pole[i, j] == pole[i + 1, j + 1])
+                                ||
+                                //// if right and down or down and left ocupied
+                                ((pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                (pole[i, j] == pole[i + 1, j] // down
+                                || pole[i, j] == pole[i - 1, j])) // up                                            
+                                ||
+                                (pole[i, j] == pole[i + 1, j] // down                                    
+                                &&
+                                (pole[i, j] == pole[i, j + 1]))) // right                                
+                                )
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (
+                                pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i + 1, j] == 0 // down
+                                &&
+                                pole[i - 1, j] == 0 // up
+                                )
+                            {
+                                if (shipHorizCells > 0)
+                                {
+                                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                                    {
+                                        allShipsHorizDict.Add(shipHorizCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsHorizDict[shipHorizCells]++;
+                                    }
+                                }
+                                shipHorizCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+
+                        #region Если правый средний
+                        else if (j == 9)
+                        {
+                            #region IF ERRORS
+                            if (
+                                //// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j - 1]
+                                ||
+                                pole[i, j] == pole[i + 1, j - 1])
+                                ||
+                                //// if right and down or down and left ocupied
+                                ((pole[i, j] == pole[i, j - 1] // left
+                                &&
+                                (pole[i, j] == pole[i + 1, j] // down
+                                || pole[i, j] == pole[i - 1, j])) // up                                            
+                                ||
+                                (pole[i, j] == pole[i + 1, j] // down                                    
+                                &&
+                                (pole[i, j] == pole[i, j - 1]))) // left                                
+                                )
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (
+                                pole[i, j - 1] == 0 // left
+                                &&
+                                pole[i + 1, j] == 0 // down
+                                &&
+                                pole[i - 1, j] == 0 // up
+                                )
+                            {
+                                if (shipHorizCells > 0)
+                                {
+                                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                                    {
+                                        allShipsHorizDict.Add(shipHorizCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsHorizDict[shipHorizCells]++;
+                                    }
+                                }
+                                shipHorizCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+
+                        #region Если центр
+                        else
+                        {
+                            #region IF ERRORS
+                            if (
+                                //// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j - 1]
+                                ||
+                                pole[i, j] == pole[i - 1, j + 1]
+                                ||
+                                pole[i, j] == pole[i + 1, j + 1]
+                                ||
+                                pole[i, j] == pole[i + 1, j - 1])
+                                ||
+                                //// if right and down or down and left ocupied
+                                ((pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                (pole[i, j] == pole[i + 1, j] // down
+                                || pole[i, j] == pole[i - 1, j])) // up                                            
+                                ||
+                                (pole[i, j] == pole[i + 1, j] // down                                    
+                                &&
+                                (pole[i, j] == pole[i, j + 1] // right
+                                || pole[i, j] == pole[i, j - 1]))) // left
+                                )
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (
+                                pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i, j - 1] == 0 // left
+                                &&
+                                pole[i + 1, j] == 0 // down
+                                &&
+                                pole[i - 1, j] == 0 // up
+                                )
+                            {
+                                if (shipHorizCells > 0)
+                                {
+                                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                                    {
+                                        allShipsHorizDict.Add(shipHorizCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsHorizDict[shipHorizCells]++;
+                                    }
+                                }
+                                shipHorizCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+                    }
+                    //// Если нету, если были корабли, то заносим в словарь и обнуляем счет
+                    else
+                    {
+                        if (shipHorizCells > 1)
+                        {
+                            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                            {
+                                allShipsHorizDict.Add(shipHorizCells, 1);
+                            }
+                            else
+                            {
+                                allShipsHorizDict[shipHorizCells]++;
+                            }
+                        }
+                        shipHorizCells = 0;
+                    }
+
+                }
+                Console.WriteLine();
+
+                //// добавляем если гориз. корабль был по окончании предыдущей
+                if (shipHorizCells > 1)
+                {
+                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+                    {
+                        allShipsHorizDict.Add(shipHorizCells, 1);
+                    }
+                    else
+                    {
+                        allShipsHorizDict[shipHorizCells]++;
+                    }
+                }
+            }
+            Console.WriteLine();
+            #endregion
+
+            #region Filling Vertical Ships
+            Dictionary<int, int> allShipsVerticDict = new Dictionary<int, int>();
+            for (int j = 0; j < width; j++)
+            {
+                int shipVerticCells = 0;
+
+                for (int i = 0; i < hight; i++)
+                {
+                    Console.Write($"{pole[i, j]} ");
+
+                    //// Если есть
+                    if (pole[i, j] == 1)
+                    {
+                        shipVerticCells++;
+
+                        #region Если верхний левый
+                        if (i == 0 && j == 0)
+                        {
+                            #region IF ERRORS
+                            if (//// if conners ocupied
+                                (pole[i, j] == pole[i + 1, j + 1])
+                                ||
+                                //// if right and down or down and left ocupied                            
+                                (pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                pole[i, j] == pole[i + 1, j])) // down                            
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i + 1, j] == 0) // down                            
+                            {
+                                if (shipVerticCells > 0)
+                                {
+                                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                                    {
+                                        allShipsVerticDict.Add(shipVerticCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsVerticDict[shipVerticCells]++;
+                                    }
+                                }
+                                shipVerticCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+                        #region Если нижний левый
+                        else if (i == 9 && j == 0)
+                        {
+                            #region IF ERRORS
+                            if (//// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j + 1])
+                                ||
+                                //// if right and down or down and left ocupied                            
+                                (pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                pole[i, j] == pole[i - 1, j])) // up                            
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i - 1, j] == 0) // up                            
+                            {
+                                if (shipVerticCells > 0)
+                                {
+                                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                                    {
+                                        allShipsVerticDict.Add(shipVerticCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsVerticDict[shipVerticCells]++;
+                                    }
+                                }
+                                shipVerticCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+                        #region Если левый средний
+                        else if (j == 0)
+                        {
+                            #region IF ERRORS
+                            if (
+                                //// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j + 1]
+                                ||
+                                pole[i, j] == pole[i + 1, j + 1])
+                                ||
+                                //// if right and down or down and left ocupied
+                                ((pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                (pole[i, j] == pole[i + 1, j] // down
+                                || pole[i, j] == pole[i - 1, j])) // up                                            
+                                ||
+                                (pole[i, j] == pole[i + 1, j] // down                                    
+                                &&
+                                (pole[i, j] == pole[i, j + 1]))) // right                                
+                                )
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (
+                                pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i + 1, j] == 0 // down
+                                &&
+                                pole[i - 1, j] == 0 // up
+                                )
+                            {
+                                if (shipVerticCells > 0)
+                                {
+                                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                                    {
+                                        allShipsVerticDict.Add(shipVerticCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsVerticDict[shipVerticCells]++;
+                                    }
+                                }
+                                shipVerticCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+
+                        #region Если верхний правый
+                        else if (i == 0 && j == 9)
+                        {
+                            #region IF ERRORS
+                            if (//// if conners ocupied
+                                (pole[i, j] == pole[i + 1, j - 1])
+                                ||
+                                //// if right and down or down and left ocupied                            
+                                (pole[i, j] == pole[i, j - 1] // left
+                                &&
+                                pole[i, j] == pole[i + 1, j])) // down                            
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (pole[i, j - 1] == 0 // right
+                                &&
+                                pole[i + 1, j] == 0) // down                            
+                            {
+                                if (shipVerticCells > 0)
+                                {
+                                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                                    {
+                                        allShipsVerticDict.Add(shipVerticCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsVerticDict[shipVerticCells]++;
+                                    }
+                                }
+                                shipVerticCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+                        #region Если нижний правый
+                        else if (i == 9 && j == 9)
+                        {
+                            #region IF ERRORS
+                            if (//// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j - 1])
+                                ||
+                                //// if right and down or down and left ocupied                            
+                                (pole[i, j] == pole[i, j - 1] // left
+                                &&
+                                pole[i, j] == pole[i - 1, j])) // up                            
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (pole[i, j - 1] == 0 // left
+                                &&
+                                pole[i - 1, j] == 0) // up                            
+                            {
+                                if (shipVerticCells > 0)
+                                {
+                                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                                    {
+                                        allShipsVerticDict.Add(shipVerticCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsVerticDict[shipVerticCells]++;
+                                    }
+                                }
+                                shipVerticCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+                        #region Если правый средний
+                        else if (j == 9)
+                        {
+                            #region IF ERRORS
+                            if (
+                                //// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j - 1]
+                                ||
+                                pole[i, j] == pole[i + 1, j - 1])
+                                ||
+                                //// if right and down or down and left ocupied
+                                ((pole[i, j] == pole[i, j - 1] // left
+                                &&
+                                (pole[i, j] == pole[i + 1, j] // down
+                                || pole[i, j] == pole[i - 1, j])) // up                                            
+                                ||
+                                (pole[i, j] == pole[i + 1, j] // down                                    
+                                &&
+                                (pole[i, j] == pole[i, j - 1]))) // left                                
+                                )
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (
+                                pole[i, j - 1] == 0 // left
+                                &&
+                                pole[i + 1, j] == 0 // down
+                                &&
+                                pole[i - 1, j] == 0 // up
+                                )
+                            {
+                                if (shipVerticCells > 0)
+                                {
+                                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                                    {
+                                        allShipsVerticDict.Add(shipVerticCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsVerticDict[shipVerticCells]++;
+                                    }
+                                }
+                                shipVerticCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+
+                        #region Если верхний средний
+                        else if (i == 0)
+                        {
+                            #region IF ERRORS
+                            if (
+                                //// if conners ocupied
+                                (pole[i, j] == pole[i + 1, j + 1]
+                                ||
+                                pole[i, j] == pole[i + 1, j - 1])
+                                ||
+                                //// if right and down or down and left ocupied
+                                ((pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                pole[i, j] == pole[i + 1, j]) // down                                                                        
+                                ||
+                                (pole[i, j] == pole[i + 1, j] // down                                    
+                                &&
+                                pole[i, j] == pole[i, j - 1])) // left
+                                )
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (
+                                pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i, j - 1] == 0 // left
+                                &&
+                                pole[i + 1, j] == 0 // down
+                                )
+                            {
+                                if (shipVerticCells > 0)
+                                {
+                                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                                    {
+                                        allShipsVerticDict.Add(shipVerticCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsVerticDict[shipVerticCells]++;
+                                    }
+                                }
+                                shipVerticCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+
+                        #region Если нижний средний
+                        else if (i == 9)
+                        {
+                            #region IF ERRORS
+                            if (
+                                //// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j - 1]
+                                ||
+                                pole[i, j] == pole[i - 1, j + 1])
+                                ||
+                                //// if right and down or down and left ocupied
+                                ((pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                pole[i, j] == pole[i - 1, j]) // up                                                                        
+                                ||
+                                (pole[i, j] == pole[i - 1, j] // up                                    
+                                &&
+                                pole[i, j] == pole[i, j - 1])) // left
+                                )
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (
+                                pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i, j - 1] == 0 // left
+                                &&
+                                pole[i - 1, j] == 0 // up
+                                )
+                            {
+                                if (shipVerticCells > 0)
+                                {
+                                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                                    {
+                                        allShipsVerticDict.Add(shipVerticCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsVerticDict[shipVerticCells]++;
+                                    }
+                                }
+                                shipVerticCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+
+                        #region Если центр
+                        else
+                        {
+                            #region IF ERRORS
+                            if (
+                                //// if conners ocupied
+                                (pole[i, j] == pole[i - 1, j - 1]
+                                ||
+                                pole[i, j] == pole[i - 1, j + 1]
+                                ||
+                                pole[i, j] == pole[i + 1, j + 1]
+                                ||
+                                pole[i, j] == pole[i + 1, j - 1])
+                                ||
+                                //// if right and down or down and left ocupied
+                                ((pole[i, j] == pole[i, j + 1] // right
+                                &&
+                                (pole[i, j] == pole[i + 1, j] // down
+                                || pole[i, j] == pole[i - 1, j])) // up                                            
+                                ||
+                                (pole[i, j] == pole[i + 1, j] // down                                    
+                                &&
+                                (pole[i, j] == pole[i, j + 1] // right
+                                || pole[i, j] == pole[i, j - 1]))) // left
+                                )
+                            {
+                                return false;
+                            }
+                            #endregion
+                            #region LONIES
+                            else if (
+                                pole[i, j + 1] == 0 // right
+                                &&
+                                pole[i, j - 1] == 0 // left
+                                &&
+                                pole[i + 1, j] == 0 // down
+                                &&
+                                pole[i - 1, j] == 0 // up
+                                )
+                            {
+                                if (shipVerticCells > 0)
+                                {
+                                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                                    {
+                                        allShipsVerticDict.Add(shipVerticCells, 1);
+                                    }
+                                    else
+                                    {
+                                        allShipsVerticDict[shipVerticCells]++;
+                                    }
+                                }
+                                shipVerticCells = 0;
+                            }
+                            #endregion
+                        }
+                        #endregion
+                    }
+                    //// Если нету, то если быди корабли, то заносим в слоаврь и обнуляем счет
+                    else
+                    {
+                        if (shipVerticCells > 1)
+                        {
+                            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                            {
+                                allShipsVerticDict.Add(shipVerticCells, 1);
+                            }
+                            else
+                            {
+                                allShipsVerticDict[shipVerticCells]++;
+                            }
+                        }
+                        shipVerticCells = 0;
+                    }
+                }
+                Console.WriteLine();
+
+                //// добавляем если гориз. корабль был по окончании предыдущей
+                if (shipVerticCells > 1)
+                {
+                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+                    {
+                        allShipsVerticDict.Add(shipVerticCells, 1);
+                    }
+                    else
+                    {
+                        allShipsVerticDict[shipVerticCells]++;
+                    }
+                }
+            }
+
+            foreach (var item in allShipsVerticDict)
+            {
+                if (!allShipsHorizDict.ContainsKey(item.Key))
+                {
+                    allShipsHorizDict.Add(item.Key, item.Value);
+                }
+                else
+                {
+                    allShipsHorizDict[item.Key] += item.Value;
+                }
+            }
+            Console.WriteLine();
+            #endregion
+
+            foreach (var item in shablon)
+            {
+                if (allShipsHorizDict.ContainsKey(item.Key))
+                {
+                    if (allShipsHorizDict[item.Key] == item.Value)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        #endregion
+
+        #region My Solution (с моим полем как пример)
+        //public static bool Battleship()
+        //{
+        //    int hight = 10;
+        //    int width = 10;
+
+        //    int[,] pole = new int[hight, width];
+
+        //    #region my Field of ships
+        //    pole[0, 0] = 1;
+        //    pole[0, 1] = 1;
+        //    pole[0, 2] = 0;
+        //    pole[0, 3] = 1;
+        //    pole[0, 4] = 0;
+        //    pole[0, 5] = 0;
+        //    pole[0, 6] = 1;
+        //    pole[0, 7] = 1;
+        //    pole[0, 8] = 1;
+        //    pole[0, 9] = 1;
+
+        //    pole[1, 0] = 0;
+        //    pole[1, 1] = 0;
+        //    pole[1, 2] = 0;
+        //    pole[1, 3] = 1;
+        //    pole[1, 4] = 0;
+        //    pole[1, 5] = 0;
+        //    pole[1, 6] = 0;
+        //    pole[1, 7] = 0;
+        //    pole[1, 8] = 0;
+        //    pole[1, 9] = 0;
+
+        //    pole[2, 0] = 0;
+        //    pole[2, 1] = 0;
+        //    pole[2, 2] = 0;
+        //    pole[2, 3] = 1;
+        //    pole[2, 4] = 0;
+        //    pole[2, 5] = 0;
+        //    pole[2, 6] = 0;
+        //    pole[2, 7] = 0;
+        //    pole[2, 8] = 0;
+        //    pole[2, 9] = 1;
+
+        //    pole[3, 0] = 0;
+        //    pole[3, 1] = 0;
+        //    pole[3, 2] = 0;
+        //    pole[3, 3] = 0;
+        //    pole[3, 4] = 0;
+        //    pole[3, 5] = 0;
+        //    pole[3, 6] = 0;
+        //    pole[3, 7] = 0;
+        //    pole[3, 8] = 0;
+        //    pole[3, 9] = 1;
+
+        //    pole[4, 0] = 0;
+        //    pole[4, 1] = 1;
+        //    pole[4, 2] = 0;
+        //    pole[4, 3] = 0;
+        //    pole[4, 4] = 0;
+        //    pole[4, 5] = 0;
+        //    pole[4, 6] = 0;
+        //    pole[4, 7] = 0;
+        //    pole[4, 8] = 0;
+        //    pole[4, 9] = 0;
+
+        //    pole[5, 0] = 0;
+        //    pole[5, 1] = 1;
+        //    pole[5, 2] = 0;
+        //    pole[5, 3] = 0;
+        //    pole[5, 4] = 0;
+        //    pole[5, 5] = 0;
+        //    pole[5, 6] = 1;
+        //    pole[5, 7] = 0;
+        //    pole[5, 8] = 0;
+        //    pole[5, 9] = 0;
+
+        //    pole[6, 0] = 0;
+        //    pole[6, 1] = 1;
+        //    pole[6, 2] = 0;
+        //    pole[6, 3] = 0;
+        //    pole[6, 4] = 0;
+        //    pole[6, 5] = 0;
+        //    pole[6, 6] = 0;
+        //    pole[6, 7] = 0;
+        //    pole[6, 8] = 0;
+        //    pole[6, 9] = 0;
+
+        //    pole[7, 0] = 0;
+        //    pole[7, 1] = 0;
+        //    pole[7, 2] = 0;
+        //    pole[7, 3] = 0;
+        //    pole[7, 4] = 0;
+        //    pole[7, 5] = 0;
+        //    pole[7, 6] = 0;
+        //    pole[7, 7] = 0;
+        //    pole[7, 8] = 0;
+        //    pole[7, 9] = 0;
+
+        //    pole[8, 0] = 0;
+        //    pole[8, 1] = 0;
+        //    pole[8, 2] = 0;
+        //    pole[8, 3] = 1;
+        //    pole[8, 4] = 0;
+        //    pole[8, 5] = 1;
+        //    pole[8, 6] = 0;
+        //    pole[8, 7] = 0;
+        //    pole[8, 8] = 1;
+        //    pole[8, 9] = 0;
+
+        //    pole[9, 0] = 1;
+        //    pole[9, 1] = 0;
+        //    pole[9, 2] = 0;
+        //    pole[9, 3] = 0;
+        //    pole[9, 4] = 0;
+        //    pole[9, 5] = 0;
+        //    pole[9, 6] = 0;
+        //    pole[9, 7] = 0;
+        //    pole[9, 8] = 1;
+        //    pole[9, 9] = 0;
+        //    #endregion
+
+        //    Dictionary<int, int> shablon = new Dictionary<int, int>();
+        //    shablon.Add(1, 8);
+        //    shablon.Add(2, 3);
+        //    shablon.Add(3, 2);
+        //    shablon.Add(4, 1);
+
+        //    #region Filling Horizontal Ships
+        //    Dictionary<int, int> allShipsHorizDict = new Dictionary<int, int>();
+        //    for (int i = 0; i < hight; i++)
+        //    {
+        //        int shipHorizCells = 0;
+
+        //        for (int j = 0; j < width; j++)
+        //        {
+        //            Console.Write($"{pole[i, j]} ");
+
+        //            //// Если есть
+        //            if (pole[i, j] == 1)
+        //            {
+        //                shipHorizCells++;
+
+        //                #region Если верхний левый
+        //                if (i == 0 && j == 0)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (//// if conners ocupied
+        //                        (pole[i, j] == pole[i + 1, j + 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied                            
+        //                        (pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        pole[i, j] == pole[i + 1, j])) // down                            
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i + 1, j] == 0) // down                            
+        //                    {
+        //                        if (shipHorizCells > 0)
+        //                        {
+        //                            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //                            {
+        //                                allShipsHorizDict.Add(shipHorizCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsHorizDict[shipHorizCells]++;
+        //                            }
+        //                        }
+        //                        shipHorizCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+        //                #region Если верхний правый
+        //                else if (i == 0 && j == 9)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (//// if conners ocupied
+        //                        (pole[i, j] == pole[i + 1, j - 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied                            
+        //                        (pole[i, j] == pole[i, j - 1] // left
+        //                        &&
+        //                        pole[i, j] == pole[i + 1, j])) // down                            
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (pole[i, j - 1] == 0 // right
+        //                        &&
+        //                        pole[i + 1, j] == 0) // down                            
+        //                    {
+        //                        if (shipHorizCells > 0)
+        //                        {
+        //                            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //                            {
+        //                                allShipsHorizDict.Add(shipHorizCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsHorizDict[shipHorizCells]++;
+        //                            }
+        //                        }
+        //                        shipHorizCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+        //                #region Если верхний средний
+        //                else if (i == 0)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (
+        //                        //// if conners ocupied
+        //                        (pole[i, j] == pole[i + 1, j + 1]
+        //                        ||
+        //                        pole[i, j] == pole[i + 1, j - 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied
+        //                        ((pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        pole[i, j] == pole[i + 1, j]) // down                                                                        
+        //                        ||
+        //                        (pole[i, j] == pole[i + 1, j] // down                                    
+        //                        &&
+        //                        pole[i, j] == pole[i, j - 1])) // left
+        //                        )
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (
+        //                        pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i, j - 1] == 0 // left
+        //                        &&
+        //                        pole[i + 1, j] == 0 // down
+        //                        )
+        //                    {
+        //                        if (shipHorizCells > 0)
+        //                        {
+        //                            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //                            {
+        //                                allShipsHorizDict.Add(shipHorizCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsHorizDict[shipHorizCells]++;
+        //                            }
+        //                        }
+        //                        shipHorizCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+
+        //                #region Если нижний левый
+        //                else if (i == 9 && j == 0)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (//// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j + 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied                            
+        //                        (pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        pole[i, j] == pole[i - 1, j])) // up                            
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i - 1, j] == 0) // up                            
+        //                    {
+        //                        if (shipHorizCells > 0)
+        //                        {
+        //                            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //                            {
+        //                                allShipsHorizDict.Add(shipHorizCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsHorizDict[shipHorizCells]++;
+        //                            }
+        //                        }
+        //                        shipHorizCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+        //                #region Если нижний правый
+        //                else if (i == 9 && j == 9)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (//// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j - 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied                            
+        //                        (pole[i, j] == pole[i, j - 1] // left
+        //                        &&
+        //                        pole[i, j] == pole[i - 1, j])) // up                            
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (pole[i, j - 1] == 0 // left
+        //                        &&
+        //                        pole[i - 1, j] == 0) // up                            
+        //                    {
+        //                        if (shipHorizCells > 0)
+        //                        {
+        //                            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //                            {
+        //                                allShipsHorizDict.Add(shipHorizCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsHorizDict[shipHorizCells]++;
+        //                            }
+        //                        }
+        //                        shipHorizCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+        //                #region Если нижний средний
+        //                else if (i == 9)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (
+        //                        //// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j - 1]
+        //                        ||
+        //                        pole[i, j] == pole[i - 1, j + 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied
+        //                        ((pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        pole[i, j] == pole[i - 1, j]) // up                                                                        
+        //                        ||
+        //                        (pole[i, j] == pole[i - 1, j] // up                                    
+        //                        &&
+        //                        pole[i, j] == pole[i, j - 1])) // left
+        //                        )
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (
+        //                        pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i, j - 1] == 0 // left
+        //                        &&
+        //                        pole[i - 1, j] == 0 // up
+        //                        )
+        //                    {
+        //                        if (shipHorizCells > 0)
+        //                        {
+        //                            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //                            {
+        //                                allShipsHorizDict.Add(shipHorizCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsHorizDict[shipHorizCells]++;
+        //                            }
+        //                        }
+        //                        shipHorizCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+
+        //                #region Если левый средний
+        //                else if (j == 0)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (
+        //                        //// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j + 1]
+        //                        ||
+        //                        pole[i, j] == pole[i + 1, j + 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied
+        //                        ((pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        (pole[i, j] == pole[i + 1, j] // down
+        //                        || pole[i, j] == pole[i - 1, j])) // up                                            
+        //                        ||
+        //                        (pole[i, j] == pole[i + 1, j] // down                                    
+        //                        &&
+        //                        (pole[i, j] == pole[i, j + 1]))) // right                                
+        //                        )
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (
+        //                        pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i + 1, j] == 0 // down
+        //                        &&
+        //                        pole[i - 1, j] == 0 // up
+        //                        )
+        //                    {
+        //                        if (shipHorizCells > 0)
+        //                        {
+        //                            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //                            {
+        //                                allShipsHorizDict.Add(shipHorizCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsHorizDict[shipHorizCells]++;
+        //                            }
+        //                        }
+        //                        shipHorizCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+
+        //                #region Если правый средний
+        //                else if (j == 9)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (
+        //                        //// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j - 1]
+        //                        ||
+        //                        pole[i, j] == pole[i + 1, j - 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied
+        //                        ((pole[i, j] == pole[i, j - 1] // left
+        //                        &&
+        //                        (pole[i, j] == pole[i + 1, j] // down
+        //                        || pole[i, j] == pole[i - 1, j])) // up                                            
+        //                        ||
+        //                        (pole[i, j] == pole[i + 1, j] // down                                    
+        //                        &&
+        //                        (pole[i, j] == pole[i, j - 1]))) // left                                
+        //                        )
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (
+        //                        pole[i, j - 1] == 0 // left
+        //                        &&
+        //                        pole[i + 1, j] == 0 // down
+        //                        &&
+        //                        pole[i - 1, j] == 0 // up
+        //                        )
+        //                    {
+        //                        if (shipHorizCells > 0)
+        //                        {
+        //                            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //                            {
+        //                                allShipsHorizDict.Add(shipHorizCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsHorizDict[shipHorizCells]++;
+        //                            }
+        //                        }
+        //                        shipHorizCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+
+        //                #region Если центр
+        //                else
+        //                {
+        //                    #region IF ERRORS
+        //                    if (
+        //                        //// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j - 1]
+        //                        ||
+        //                        pole[i, j] == pole[i - 1, j + 1]
+        //                        ||
+        //                        pole[i, j] == pole[i + 1, j + 1]
+        //                        ||
+        //                        pole[i, j] == pole[i + 1, j - 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied
+        //                        ((pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        (pole[i, j] == pole[i + 1, j] // down
+        //                        || pole[i, j] == pole[i - 1, j])) // up                                            
+        //                        ||
+        //                        (pole[i, j] == pole[i + 1, j] // down                                    
+        //                        &&
+        //                        (pole[i, j] == pole[i, j + 1] // right
+        //                        || pole[i, j] == pole[i, j - 1]))) // left
+        //                        )
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (
+        //                        pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i, j - 1] == 0 // left
+        //                        &&
+        //                        pole[i + 1, j] == 0 // down
+        //                        &&
+        //                        pole[i - 1, j] == 0 // up
+        //                        )
+        //                    {
+        //                        if (shipHorizCells > 0)
+        //                        {
+        //                            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //                            {
+        //                                allShipsHorizDict.Add(shipHorizCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsHorizDict[shipHorizCells]++;
+        //                            }
+        //                        }
+        //                        shipHorizCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+
+        //            }
+        //            //// Если нету, то если быди корабли, то заносим в слоаврь и обнуляем счет
+        //            else
+        //            {
+        //                if (shipHorizCells > 1)
+        //                {
+        //                    if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //                    {
+        //                        allShipsHorizDict.Add(shipHorizCells, 1);
+        //                    }
+        //                    else
+        //                    {
+        //                        allShipsHorizDict[shipHorizCells]++;
+        //                    }
+        //                }
+        //                shipHorizCells = 0;
+        //            }
+
+        //        }
+        //        Console.WriteLine();
+
+        //        //// добавляем если гориз. корабль был по окончании предыдущей
+        //        if (shipHorizCells > 1)
+        //        {
+        //            if (!allShipsHorizDict.ContainsKey(shipHorizCells))
+        //            {
+        //                allShipsHorizDict.Add(shipHorizCells, 1);
+        //            }
+        //            else
+        //            {
+        //                allShipsHorizDict[shipHorizCells]++;
+        //            }
+        //        }
+        //    }
+        //    Console.WriteLine();
+        //    #endregion
+
+        //    #region Filling Vertical Ships
+        //    Dictionary<int, int> allShipsVerticDict = new Dictionary<int, int>();
+        //    for (int j = 0; j < width; j++)
+        //    {
+        //        int shipVerticCells = 0;
+
+        //        for (int i = 0; i < hight; i++)
+        //        {
+        //            Console.Write($"{pole[i, j]} ");
+
+        //            //// Если есть
+        //            if (pole[i, j] == 1)
+        //            {
+        //                shipVerticCells++;
+
+        //                #region Если верхний левый
+        //                if (i == 0 && j == 0)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (//// if conners ocupied
+        //                        (pole[i, j] == pole[i + 1, j + 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied                            
+        //                        (pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        pole[i, j] == pole[i + 1, j])) // down                            
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i + 1, j] == 0) // down                            
+        //                    {
+        //                        if (shipVerticCells > 0)
+        //                        {
+        //                            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //                            {
+        //                                allShipsVerticDict.Add(shipVerticCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsVerticDict[shipVerticCells]++;
+        //                            }
+        //                        }
+        //                        shipVerticCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+        //                #region Если нижний левый
+        //                else if (i == 9 && j == 0)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (//// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j + 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied                            
+        //                        (pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        pole[i, j] == pole[i - 1, j])) // up                            
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i - 1, j] == 0) // up                            
+        //                    {
+        //                        if (shipVerticCells > 0)
+        //                        {
+        //                            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //                            {
+        //                                allShipsVerticDict.Add(shipVerticCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsVerticDict[shipVerticCells]++;
+        //                            }
+        //                        }
+        //                        shipVerticCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+        //                #region Если левый средний
+        //                else if (j == 0)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (
+        //                        //// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j + 1]
+        //                        ||
+        //                        pole[i, j] == pole[i + 1, j + 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied
+        //                        ((pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        (pole[i, j] == pole[i + 1, j] // down
+        //                        || pole[i, j] == pole[i - 1, j])) // up                                            
+        //                        ||
+        //                        (pole[i, j] == pole[i + 1, j] // down                                    
+        //                        &&
+        //                        (pole[i, j] == pole[i, j + 1]))) // right                                
+        //                        )
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (
+        //                        pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i + 1, j] == 0 // down
+        //                        &&
+        //                        pole[i - 1, j] == 0 // up
+        //                        )
+        //                    {
+        //                        if (shipVerticCells > 0)
+        //                        {
+        //                            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //                            {
+        //                                allShipsVerticDict.Add(shipVerticCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsVerticDict[shipVerticCells]++;
+        //                            }
+        //                        }
+        //                        shipVerticCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+
+        //                #region Если верхний правый
+        //                else if (i == 0 && j == 9)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (//// if conners ocupied
+        //                        (pole[i, j] == pole[i + 1, j - 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied                            
+        //                        (pole[i, j] == pole[i, j - 1] // left
+        //                        &&
+        //                        pole[i, j] == pole[i + 1, j])) // down                            
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (pole[i, j - 1] == 0 // right
+        //                        &&
+        //                        pole[i + 1, j] == 0) // down                            
+        //                    {
+        //                        if (shipVerticCells > 0)
+        //                        {
+        //                            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //                            {
+        //                                allShipsVerticDict.Add(shipVerticCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsVerticDict[shipVerticCells]++;
+        //                            }
+        //                        }
+        //                        shipVerticCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+        //                #region Если нижний правый
+        //                else if (i == 9 && j == 9)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (//// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j - 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied                            
+        //                        (pole[i, j] == pole[i, j - 1] // left
+        //                        &&
+        //                        pole[i, j] == pole[i - 1, j])) // up                            
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (pole[i, j - 1] == 0 // left
+        //                        &&
+        //                        pole[i - 1, j] == 0) // up                            
+        //                    {
+        //                        if (shipVerticCells > 0)
+        //                        {
+        //                            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //                            {
+        //                                allShipsVerticDict.Add(shipVerticCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsVerticDict[shipVerticCells]++;
+        //                            }
+        //                        }
+        //                        shipVerticCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+        //                #region Если правый средний
+        //                else if (j == 9)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (
+        //                        //// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j - 1]
+        //                        ||
+        //                        pole[i, j] == pole[i + 1, j - 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied
+        //                        ((pole[i, j] == pole[i, j - 1] // left
+        //                        &&
+        //                        (pole[i, j] == pole[i + 1, j] // down
+        //                        || pole[i, j] == pole[i - 1, j])) // up                                            
+        //                        ||
+        //                        (pole[i, j] == pole[i + 1, j] // down                                    
+        //                        &&
+        //                        (pole[i, j] == pole[i, j - 1]))) // left                                
+        //                        )
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (
+        //                        pole[i, j - 1] == 0 // left
+        //                        &&
+        //                        pole[i + 1, j] == 0 // down
+        //                        &&
+        //                        pole[i - 1, j] == 0 // up
+        //                        )
+        //                    {
+        //                        if (shipVerticCells > 0)
+        //                        {
+        //                            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //                            {
+        //                                allShipsVerticDict.Add(shipVerticCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsVerticDict[shipVerticCells]++;
+        //                            }
+        //                        }
+        //                        shipVerticCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+
+        //                #region Если верхний средний
+        //                else if (i == 0)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (
+        //                        //// if conners ocupied
+        //                        (pole[i, j] == pole[i + 1, j + 1]
+        //                        ||
+        //                        pole[i, j] == pole[i + 1, j - 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied
+        //                        ((pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        pole[i, j] == pole[i + 1, j]) // down                                                                        
+        //                        ||
+        //                        (pole[i, j] == pole[i + 1, j] // down                                    
+        //                        &&
+        //                        pole[i, j] == pole[i, j - 1])) // left
+        //                        )
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (
+        //                        pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i, j - 1] == 0 // left
+        //                        &&
+        //                        pole[i + 1, j] == 0 // down
+        //                        )
+        //                    {
+        //                        if (shipVerticCells > 0)
+        //                        {
+        //                            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //                            {
+        //                                allShipsVerticDict.Add(shipVerticCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsVerticDict[shipVerticCells]++;
+        //                            }
+        //                        }
+        //                        shipVerticCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+
+        //                #region Если нижний средний
+        //                else if (i == 9)
+        //                {
+        //                    #region IF ERRORS
+        //                    if (
+        //                        //// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j - 1]
+        //                        ||
+        //                        pole[i, j] == pole[i - 1, j + 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied
+        //                        ((pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        pole[i, j] == pole[i - 1, j]) // up                                                                        
+        //                        ||
+        //                        (pole[i, j] == pole[i - 1, j] // up                                    
+        //                        &&
+        //                        pole[i, j] == pole[i, j - 1])) // left
+        //                        )
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (
+        //                        pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i, j - 1] == 0 // left
+        //                        &&
+        //                        pole[i - 1, j] == 0 // up
+        //                        )
+        //                    {
+        //                        if (shipVerticCells > 0)
+        //                        {
+        //                            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //                            {
+        //                                allShipsVerticDict.Add(shipVerticCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsVerticDict[shipVerticCells]++;
+        //                            }
+        //                        }
+        //                        shipVerticCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+
+        //                #region Если центр
+        //                else
+        //                {
+        //                    #region IF ERRORS
+        //                    if (
+        //                        //// if conners ocupied
+        //                        (pole[i, j] == pole[i - 1, j - 1]
+        //                        ||
+        //                        pole[i, j] == pole[i - 1, j + 1]
+        //                        ||
+        //                        pole[i, j] == pole[i + 1, j + 1]
+        //                        ||
+        //                        pole[i, j] == pole[i + 1, j - 1])
+        //                        ||
+        //                        //// if right and down or down and left ocupied
+        //                        ((pole[i, j] == pole[i, j + 1] // right
+        //                        &&
+        //                        (pole[i, j] == pole[i + 1, j] // down
+        //                        || pole[i, j] == pole[i - 1, j])) // up                                            
+        //                        ||
+        //                        (pole[i, j] == pole[i + 1, j] // down                                    
+        //                        &&
+        //                        (pole[i, j] == pole[i, j + 1] // right
+        //                        || pole[i, j] == pole[i, j - 1]))) // left
+        //                        )
+        //                    {
+        //                        return false;
+        //                    }
+        //                    #endregion
+        //                    #region LONIES
+        //                    else if (
+        //                        pole[i, j + 1] == 0 // right
+        //                        &&
+        //                        pole[i, j - 1] == 0 // left
+        //                        &&
+        //                        pole[i + 1, j] == 0 // down
+        //                        &&
+        //                        pole[i - 1, j] == 0 // up
+        //                        )
+        //                    {
+        //                        if (shipVerticCells > 0)
+        //                        {
+        //                            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //                            {
+        //                                allShipsVerticDict.Add(shipVerticCells, 1);
+        //                            }
+        //                            else
+        //                            {
+        //                                allShipsVerticDict[shipVerticCells]++;
+        //                            }
+        //                        }
+        //                        shipVerticCells = 0;
+        //                    }
+        //                    #endregion
+        //                }
+        //                #endregion
+
+        //            }
+        //            //// Если нету, то если быди корабли, то заносим в слоаврь и обнуляем счет
+        //            else
+        //            {
+        //                if (shipVerticCells > 1)
+        //                {
+        //                    if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //                    {
+        //                        allShipsVerticDict.Add(shipVerticCells, 1);
+        //                    }
+        //                    else
+        //                    {
+        //                        allShipsVerticDict[shipVerticCells]++;
+        //                    }
+        //                }
+        //                shipVerticCells = 0;
+        //            }
+
+        //        }
+        //        Console.WriteLine();
+
+        //        //// добавляем если гориз. корабль был по окончании предыдущей
+        //        if (shipVerticCells > 1)
+        //        {
+        //            if (!allShipsVerticDict.ContainsKey(shipVerticCells))
+        //            {
+        //                allShipsVerticDict.Add(shipVerticCells, 1);
+        //            }
+        //            else
+        //            {
+        //                allShipsVerticDict[shipVerticCells]++;
+        //            }
+        //        }
+        //    }
+
+        //    foreach (var item in allShipsVerticDict)
+        //    {
+        //        if (!allShipsHorizDict.ContainsKey(item.Key))
+        //        {
+        //            allShipsHorizDict.Add(item.Key, item.Value);
+        //        }
+        //        else
+        //        {
+        //            allShipsHorizDict[item.Key] += item.Value;
+        //        }
+        //    }
+        //    Console.WriteLine();
+        //    #endregion
+        //    foreach (var item in allShipsHorizDict)
+        //    {
+        //        if (shablon[item.Key]==item.Value)
+        //        {
+        //            continue;
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
+        //    }
+
+        //    return true;
+        //}
+        #endregion
+        #endregion
+
+        #region CodeWars tests
+        #region 021 - 4kyu (parseInt() reloaded) Convert a string into an integer. The strings simply represent the numbers in words.
+
+        //static void Main(string[] args)
+        //{
+        //    Console.WriteLine(ParseInt("five million six hundred eighty nine thousand four hundred twenty-seven"));
+        //    //Console.WriteLine(ParseInt("five million six lakh eighty nine thousand four hundred twenty-seven"));
+
+        //    //Console.WriteLine(ParseInt("thirty-five million six hundred sixty-six thousand six hundred sixty-six"));
+        //    //Console.WriteLine(ParseInt("six hundred sixty six thousand six hundred sixty-six"));
+        //}
 
         #region from Web 02 - RegEx
         //private static Dictionary<string, int> numberTable =
@@ -223,7 +2353,6 @@ namespace Codewars_Console_vs19
         #endregion
         #endregion
 
-        #region CodeWars tests
         #region 020 - 4kyu (Strip Comments) Complete the solution so that it strips all text that follows any of a set of comment markers passed in.
 
         //static void Main(string[] args)
@@ -2159,6 +4288,93 @@ namespace Codewars_Console_vs19
     }
 }
 #region ПРИМЕРЫ
+#region Sorting Dictionary (Dictionary не имеет метода сортировки)
+//List<KeyValuePair<string, string>> myList = aDictionary.ToList();
+
+//myList.Sort(
+//    delegate (KeyValuePair<string, string> pair1,
+//    KeyValuePair<string, string> pair2)
+//    {
+//        return pair1.Value.CompareTo(pair2.Value);
+//    }
+//);
+
+//////или так после .NET 2.0
+//var myList = aDictionary.ToList();
+//myList.Sort((pair1, pair2) => pair1.Value.CompareTo(pair2.Value));
+#endregion
+
+#region Dictionary - Словари (Заполнение)
+//Dictionary<int, int> numsCount = new Dictionary<int, int>();
+
+//for (int i = 0; i < arr.Length; i++)
+//{
+//    if (!numsCount.ContainsKey(arr[i]))
+//    {
+//        numsCount.Add(arr[i], 1);
+//    }
+//    else
+//    {
+//        numsCount[arr[i]]++;
+//    }
+//}
+
+////// ЕЩЕ
+//Dictionary<int, int> numsDict = new Dictionary<int, int>();
+
+//foreach (int item in seq)
+//{
+//    if (!numsDict.ContainsKey(item))
+//    {
+//        numsDict.Add(item, 1);
+//    }
+//    else
+//    {
+//        numsDict[item]++;
+//    }
+//}
+#endregion
+
+#region пример заполнения двумерного массива циклом
+//int hight = 10;
+//int width = 10;
+
+//int[,] pole = new int[hight, width];
+
+//for (int i = 0; i < hight; i++)
+//{
+//    for (int j = 0; j < width; j++)
+//    {
+//        pole[i, j] = 0;
+//    }
+//} 
+
+////// еще
+////    Console.Write("Введите высоту: ");
+////    int hight = Convert.ToInt32(Console.ReadLine());
+////    Console.Write("Введите ширину: ");
+////    int width = Convert.ToInt32(Console.ReadLine());
+
+////    int[,] array = new int[hight, width];
+////    for (int i = 0; i < hight; i++)
+////    {
+////        for (int j = 0; j < width; j++)
+////        {
+////            array[i, j] = (i * hight) + j + 1;
+////        }
+////    }
+
+////    for (int i = 0; i < hight; i++)
+////    {
+////        for (int j = 0; j < width; j++)
+////        {
+////            Console.Write("{0,4}", array[i, j]);
+////        }
+////        Console.WriteLine();
+////    }
+////    Console.WriteLine();
+#endregion
+
 #region строку string проще делить так:
 //string[] texts = text.Split("\n");
 
