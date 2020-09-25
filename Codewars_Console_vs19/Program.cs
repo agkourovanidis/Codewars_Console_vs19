@@ -1,33 +1,418 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
+using System.Data;
 using System.Numerics;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace Codewars_Console_vs19
 {
     class Program
     {
-        #region 022 - 3kyu (Battleship field validator) Write a method that takes a field for well-known board game 
-        //// "Battleship" as an argument and returns true if it has a valid disposition of ships, false otherwise.
+        #region 024 - 4kyu (Sudoku Solution Validator) Write a function validSolution/ValidateSolution/valid_solution() 
+        //// that accepts a 2D array representing a Sudoku board, and returns true if it is a valid solution, or false otherwise
 
         static void Main(string[] args)
         {
-            int[,] field = new int[10, 10]
-                     {{1, 0, 0, 0, 0, 1, 1, 0, 0, 0},
-                      {1, 0, 1, 0, 0, 0, 0, 0, 1, 0},
-                      {1, 0, 1, 0, 1, 1, 1, 0, 1, 0},
-                      {1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                      {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-                      {0, 0, 0, 0, 1, 0, 1, 0, 0, 0},
-                      {0, 0, 0, 0, 1, 0, 0, 0, 1, 0},
-                      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                      {0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
-                      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            //int[][] board =
+            //{//// false
+            //new []{4, 4, 4, 6, 7, 8, 9, 1, 2},
+            //new []{7, 6, 2, 1, 9, 5, 3, 4, 8},
+            //new []{1, 9, 8, 3, 4, 2, 5, 6, 7},
+            //new []{8, 5, 9, 7, 6, 1, 4, 2, 3},
+            //new []{4, 2, 6, 8, 5, 3, 7, 9, 1},
+            //new []{7, 1, 3, 9, 2, 4, 8, 5, 6},
+            //new []{9, 6, 1, 5, 3, 7, 2, 8, 4},
+            //new []{2, 8, 7, 4, 1, 9, 6, 3, 5},
+            //new []{3, 4, 5, 2, 8, 6, 1, 7, 9}
+            //};
 
-            Console.WriteLine(ValidateBattlefield(field));
+            int[][] board =
+            {//// true
+            new []{5, 3, 4, 6, 7, 8, 9, 1, 2},
+            new []{6, 7, 2, 1, 9, 5, 3, 4, 8},
+            new []{1, 9, 8, 3, 4, 2, 5, 6, 7},
+            new []{8, 5, 9, 7, 6, 1, 4, 2, 3},
+            new []{4, 2, 6, 8, 5, 3, 7, 9, 1},
+            new []{7, 1, 3, 9, 2, 4, 8, 5, 6},
+            new []{9, 6, 1, 5, 3, 7, 2, 8, 4},
+            new []{2, 8, 7, 4, 1, 9, 6, 3, 5},
+            new []{3, 4, 5, 2, 8, 6, 1, 7, 9},
+            };
+
+            //int[][] board =
+            //{
+            //new []{5, 3, 4, 6, 7, 8, 9, 1, 2},
+            //new []{6, 7, 2, 1, 9, 0, 3, 4, 8},
+            //new []{1, 0, 0, 3, 4, 2, 5, 6, 0},
+            //new []{8, 5, 9, 7, 6, 1, 0, 2, 0},
+            //new []{4, 2, 6, 8, 5, 3, 7, 9, 1},
+            //new []{7, 1, 3, 9, 2, 4, 8, 5, 6},
+            //new []{9, 0, 1, 5, 3, 7, 2, 1, 4},
+            //new []{2, 8, 7, 4, 1, 9, 6, 3, 5},
+            //new []{3, 0, 0, 4, 8, 1, 1, 7, 9},
+            //};
+
+
+            Console.WriteLine(ValidateSolution(board));
+            stopwatch.Stop();
+            Console.WriteLine($"{stopwatch.ElapsedMilliseconds} ms");
+
         }
+
+        #region My Solution 02 - same as 01 but short
+        public static bool ValidateSolution(int[][] board)
+        {
+            int[] tmpArr = new int[9];
+
+            foreach (var item in board) if (item.Distinct().Count() != 9 || item.Contains(0)) return false;
+
+            for (int i = 0; i < board.Length; i++)
+            {
+                for (int j = 0; j < board.Length; j++) tmpArr[j] = board[j][i];
+
+                if (tmpArr.Distinct().Count() != 9 || tmpArr.Contains(0)) return false;
+            }
+
+            for (int z = 0; z < board.Length; z += 3)
+            {
+                for (int a = 0; a < board.Length; a += 3)
+                {
+                    int curCell = 0;
+
+                    for (int i = 0; i < board.Length / 3; i++)
+                    {
+                        for (int j = 0; j < board.Length / 3; j++)
+                        {
+                            tmpArr[curCell] = board[a + i][z + j];
+                            curCell++;
+                        }
+                    }
+                    if (tmpArr.Distinct().Count() != 9 || tmpArr.Contains(0)) return false;
+                }
+            }
+
+            return true;
+        }
+        #endregion
+
+        #region from Web 02
+        //public static bool ValidateSolution(int[][] board)
+        //{
+        //    ////// разбор
+        //    //// takes all records in D array
+        //    var aa = board.SelectMany(row => row).ToArray();
+        //    //// checkes for 0-s
+        //    var bb = aa.Any(x => x == 0);
+
+        //    var cc = Enumerable.Range(0, 9).ToArray();
+
+        //    /////////////////////////////////////////////////
+        //    if (board.SelectMany(row => row).Any(x => x == 0))
+        //        return false;
+
+        //    return Enumerable.Range(0, 9).All(i =>
+        //       CellsInRow(board, i).Distinct().Count() == 9
+        //       && CellsInCol(board, i).Distinct().Count() == 9
+        //       && CellsInBox(board, i).Distinct().Count() == 9
+        //    );
+        //}
+
+        //static IEnumerable<int> CellsInRow(int[][] board, int row) => board[row];
+        //static IEnumerable<int> CellsInCol(int[][] board, int col) => board.Select(row => row[col]);
+        //static IEnumerable<int> CellsInBox(int[][] board, int box) => Enumerable.Range(0, 9)
+        //  .SelectMany(i => CellsInRow(board, (box - box % 3) + i / 3).Skip(3 * (box % 3)).Take(3));
+        #endregion
+
+        #region from Web 01 - good examples for filling columns and blocks
+        //private static int[] nineNumbers = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+        //public static bool ValidateSolution(int[][] board)
+        //{
+        //    for (int i = 0; i < 9; ++i)
+        //    {
+        //        var row = new List<int>();
+        //        for (int j = 0; j < 9; ++j) row.Add(board[i][j]);
+        //        if (!ValidateNine(row)) return false;
+
+        //        var col = new List<int>();
+        //        for (int j = 0; j < 9; ++j) col.Add(board[j][i]);
+        //        if (!ValidateNine(col)) return false;
+
+        //        var block = new List<int>();
+        //        int br = (i / 3) * 3;
+        //        int bc = (i % 3) * 3;
+        //        for (int j = 0; j < 9; ++j) block.Add(board[br + j / 3][bc + j % 3]);
+        //        if (!ValidateNine(block)) return false;
+        //    }
+
+        //    return true;
+        //}
+
+        //private static bool ValidateNine(IList<int> nine)
+        //{
+        //    return nineNumbers.All(nine.Contains);
+        //}
+        #endregion
+
+        #region My Solution 01
+        //public static bool ValidateSolution(int[][] board)
+        //{
+        //    //// If 0-s allowed
+        //    //int[] allNums = new int[10] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+        //    Console.WriteLine("by cubes check:");
+        //    for (int z = 0; z < board.Length; z += 3)
+        //    {
+        //        for (int a = 0; a < board.Length; a += 3)
+        //        {
+        //            int curCell = 0;
+        //            int[] cubeArr = new int[9];
+        //            for (int i = 0; i < board.Length / 3; i++)
+        //            {
+        //                for (int j = 0; j < board.Length / 3; j++)
+        //                {
+        //                    cubeArr[curCell] = board[a + i][z + j];
+        //                    curCell++;
+        //                }
+        //            }
+        //            Console.WriteLine(string.Join(",", cubeArr));
+
+        //            //// If 0-s allowed
+        //            //int missing = allNums.Except(cubeArr).Count();
+        //            //if (missing > 1) return false;
+
+        //            //// If 0-s NOT allowed
+        //            if (cubeArr.Distinct().Count() != 9 || cubeArr.Contains(0)) return false;
+        //        }
+        //    }
+
+        //    Console.WriteLine();
+        //    Console.WriteLine("Horizontal check:");
+        //    foreach (var item in board)
+        //    {
+        //        Console.WriteLine(string.Join(",", item));
+
+        //        //// If 0-s allowed
+        //        //int missing = allNums.Except(item).Count();
+        //        //if (missing > 1) return false;
+
+        //        //// If 0-s NOT allowed
+        //        if (item.Distinct().Count() != 9 || item.Contains(0)) return false;
+        //    }
+
+        //    Console.WriteLine();
+        //    Console.WriteLine("Vertical check:");
+        //    for (int i = 0; i < board.Length; i++)
+        //    {
+        //        int[] vertArr = new int[9];
+
+        //        for (int j = 0; j < board.Length; j++)
+        //        {
+        //            vertArr[j] = board[j][i];
+        //        }
+
+        //        Console.WriteLine(string.Join(",", vertArr));
+
+        //        //// If 0-s allowed
+        //        //int missing = allNums.Except(vertArr).Count();
+        //        //if (missing > 1) return false;
+
+        //        //// If 0-s NOT allowed
+        //        if (vertArr.Distinct().Count() != 9 || vertArr.Contains(0)) return false;
+        //    }
+
+        //    Console.WriteLine();
+
+        //    return true;
+        //}
+        #endregion
+        #endregion
+
+        #region CodeWars tests
+
+        #region 023 - 4kyu (Snail Sort) Given an n x n array, return the array elements arranged from 
+        //// outermost elements to the middle element, traveling clockwise
+
+        //static void Main(string[] args)
+        //{
+        #region tests
+        //    //int[][] array = new int[1][];
+        //    //array[0] = new int[0];
+
+        //    //int[][] array =
+        //    //{
+        //    //new []{1}
+        //    // };
+
+        //    int[][] array =
+        //    {
+        //    new []{1,   2,  3,  4},
+        //    new []{5,   6,  7,  8},
+        //    new []{9,  10, 11, 12},
+        //    new []{13, 14, 15, 16}
+        //     };
+
+        //    //int[][] array ={
+        //    //new []{1,2,3,4,5},
+        //    //new []{6,7,8,9,10},
+        //    //new []{11,12,13,14,15},
+        //    //new []{16,17,18,19,20},
+        //    //new []{21,22,23,24,25}
+        //    //};
+
+        //    //int[][] array =
+        //    //{
+        //    //new []{1,2,3,4,5,6},
+        //    //new []{7,8,9,10,11,12},
+        //    //new []{13,14,15,16,17,18},
+        //    //new []{19,20,21,22,23,24},
+        //    //new []{25,26,27,28,29,30},
+        //    //new []{31,32,33,34,35,36}
+        //    // };
+        #endregion
+
+        //    Test(array);
+
+        //    //// if remove the upper variant, then uncomment this
+        //    //foreach (var item in Snail(array))
+        //    //{
+        //    //    Console.Write(item);
+        //    //    Console.Write(", ");
+        //    //}
+        //    //Console.WriteLine();
+        //}
+
+        #region just for showing test result - (may be remove, then should uncomment another method in Main())
+        public static string Int2dToString(int[][] a)
+        {
+            return $"[{string.Join("\n", a.Select(row => $"[{string.Join(",", row)}]"))}]";
+        }
+        public static void Test(int[][] array)
+        {
+            var text = $"{Int2dToString(array)}\n\n Sorted to\n[{string.Join(",", Snail(array))}]\n";
+            Console.WriteLine(text);
+        }
+        #endregion
+
+        #region My Solution 01
+        public static int[] Snail(int[][] array)
+        {
+            if (array[0].Length == 0)
+            {
+                return new int[0];
+            }
+            int[] result = new int[(array.Length * array.Length)];
+
+            int HorStart = 0;
+            int VerStart = 0;
+            int HorEnd = 0;
+            int VerEnd = 0;
+            string direction = "r";
+
+            int currCell = 0;
+
+
+            for (int a = 0; a < array.Length * 2 - 1; a++)
+            {
+                // right
+                if (direction == "r")
+                {
+                    for (int i = 0; i < array.Length - VerStart - VerEnd; i++)
+                    {
+                        result[currCell] = array[HorStart][i + VerStart];
+                        currCell++;
+                    }
+                    direction = "d";
+                    HorStart++;
+                }
+
+                // down
+                else if (direction == "d")
+                {
+                    for (int i = 0; i < array.Length - HorStart - HorEnd; i++)
+                    {
+                        result[currCell] = array[i + HorStart][(array.Length - 1) - VerEnd];
+                        currCell++;
+                    }
+                    direction = "l";
+                    VerEnd++;
+                }
+
+                // left
+                else if (direction == "l")
+                {
+                    for (int i = (array.Length - 1) - VerEnd - VerStart; i >= 0; i--)
+                    {
+                        result[currCell] = array[(array.Length - 1) - HorEnd][i + VerStart];
+                        currCell++;
+                    }
+                    direction = "u";
+                    HorEnd++;
+                }
+
+                // up
+                else if (direction == "u")
+                {
+                    for (int i = (array.Length - 1) - HorEnd - HorStart; i >= 0; i--)
+                    {
+                        result[currCell] = array[i + HorStart][VerStart];
+                        currCell++;
+                    }
+                    direction = "r";
+                    VerStart++;
+                }
+            }
+            return result;
+        }
+        #endregion
+
+        #region from Web
+        //public static int[] Snail(int[][] array)
+        //{
+        //    int l = array[0].Length;
+        //    int[] sorted = new int[l * l];
+        //    Snail(array, -1, 0, 1, 0, l, 0, sorted);
+        //    return sorted;
+        //}
+
+        //public static void Snail(int[][] array, int x, int y, int dx, int dy, int l, int i, int[] sorted)
+        //{
+        //    if (l == 0)
+        //        return;
+        //    for (int j = 0; j < l; j++)
+        //    {
+        //        x += dx;
+        //        y += dy;
+        //        sorted[i++] = array[y][x];
+        //    }
+        //    Snail(array, x, y, -dy, dx, dy == 0 ? l - 1 : l, i, sorted);
+        //}
+        #endregion
+        #endregion
+
+        #region 022 - 3kyu (Battleship field validator) Write a method that takes a field for well-known board game 
+        //// "Battleship" as an argument and returns true if it has a valid disposition of ships, false otherwise.
+
+        //static void Main(string[] args)
+        //{
+        //    int[,] field = new int[10, 10]
+        //             {{1, 0, 0, 0, 0, 1, 1, 0, 0, 0},
+        //              {1, 0, 1, 0, 0, 0, 0, 0, 1, 0},
+        //              {1, 0, 1, 0, 1, 1, 1, 0, 1, 0},
+        //              {1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        //              {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+        //              {0, 0, 0, 0, 1, 0, 1, 0, 0, 0},
+        //              {0, 0, 0, 0, 1, 0, 0, 0, 1, 0},
+        //              {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        //              {0, 0, 0, 1, 0, 0, 0, 1, 0, 0},
+        //              {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+
+        //    Console.WriteLine(ValidateBattlefield(field));
+        //}
 
         #region My Solution 02
         public static bool ValidateBattlefield(int[,] field)
@@ -1132,7 +1517,6 @@ namespace Codewars_Console_vs19
         #endregion
         #endregion
 
-        #region CodeWars tests
         #region 021 - 4kyu (parseInt() reloaded) Convert a string into an integer. The strings simply represent the numbers in words.
 
         //static void Main(string[] args)
@@ -1143,6 +1527,141 @@ namespace Codewars_Console_vs19
         //    //Console.WriteLine(ParseInt("thirty-five million six hundred sixty-six thousand six hundred sixty-six"));
         //    //Console.WriteLine(ParseInt("six hundred sixty six thousand six hundred sixty-six"));
         //}
+
+        #region My Solution
+        public static int ParseInt(string s)
+        {
+            #region Creatting a dictionary with Numbers and Letters
+            Dictionary<string, int> dict = new Dictionary<string, int>()
+            {
+                {"zero", 0},
+                {"one", 1},
+                {"two", 2},
+                {"three", 3},
+                {"four", 4},
+                {"five", 5},
+                {"six", 6},
+                {"seven", 7},
+                {"eight", 8},
+                {"nine", 9},
+                {"ten", 10},
+
+                {"eleven",11},
+                {"twelve",12},
+                {"thirteen",13},
+                {"fourteen",14},
+                {"fifteen",15},
+                {"sixteen",16},
+                {"seventeen",17},
+                {"eighteen",18},
+                {"nineteen",19},
+
+                {"twenty",20},
+                {"thirty",30},
+                {"forty",40},
+                {"fifty",50},
+                {"sixty",60},
+                {"seventy",70},
+                {"eighty",80},
+                {"ninety",90},
+
+                {"hundred",100},
+
+                {"thousand",1000},
+
+                {"lakh",100000},
+
+                {"million",1000000}
+            };
+            #endregion
+
+            s = s.Replace(" and", "");
+
+            //// 01 splitting into parts
+            Dictionary<string, string> splitted = new Dictionary<string, string>();
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (s.Contains("million"))
+                {
+
+                    splitted.Add("million", s.Split("million")[0] + "million".Trim());
+                    s = s.Split("million")[1].Trim();
+                }
+                else if (s.Contains("thousand"))
+                {
+                    splitted.Add("thousand", s.Split("thousand")[0] + "thousand".Trim());
+                    s = s.Split("thousand")[1].Trim();
+                }
+                else if (s.Contains("hundred"))
+                {
+                    splitted.Add("hundred", s.Split("hundred")[0] + "hundred".Trim());
+                    s = s.Split("hundred")[1].Trim();
+                }
+                else
+                {
+                    splitted.Add("dcds", s.Trim() + " one");
+                    s = "";
+                }
+            }
+
+            //// 02 continue
+            List<string> numList = new List<string>();
+            foreach (var item in splitted)
+            {
+                numList.Add(item.Value);
+            }
+
+            var ssss = numList.Select(x => x.Split(" ")).ToList();
+
+            //// getting the array in numbers
+            List<int> numsArray = new List<int>();
+            foreach (var item in ssss)
+            {
+                List<int> tmp = new List<int>();
+
+                for (int i = 0; i < item.Count(); i++)
+                {
+                    if (item[i].Contains("-"))
+                    {
+                        string[] tmpArray = item[i].Split("-");
+                        string frstNum = dict.Where(x => x.Key.ToUpper() == tmpArray[0].ToUpper()).Select(a => a.Value).First().ToString().Remove(1);
+                        tmp.Add(Int32.Parse(frstNum + dict.Where(x => x.Key.ToUpper() == tmpArray[1].ToUpper()).Select(a => a.Value).First().ToString()));
+                    }
+                    else
+                    {
+                        tmp.Add(Int32.Parse(dict.Where(x => x.Key.ToUpper() == item[i].ToUpper()).Select(a => a.Value).First().ToString()));
+                    }
+                }
+
+                List<int> TmpList = new List<int>();
+                for (int i = 0; i < tmp.Count - 1; i++)
+                {
+                    //// если последняя запись
+                    if (i == tmp.Count() - 2)
+                    {
+                        TmpList.Add(tmp[i]);
+                    }
+                    //// если в записи 1 цифра
+                    else if (tmp[i + 1].ToString().Length == 1)
+                    {
+                        var newNum = (tmp[i] + tmp[i + 1]);
+                        TmpList.Add(newNum);
+                        i++;
+                    }
+                    else
+                    {
+                        var newNum = tmp[i] * tmp[i + 1];
+                        TmpList.Add(newNum);
+                        i++;
+                    }
+                }
+
+                numsArray.Add(TmpList.Sum() * tmp.Last());
+            }
+
+            return numsArray.Sum();
+        }
+        #endregion
 
         #region from Web 02 - RegEx
         //private static Dictionary<string, int> numberTable =
@@ -1209,142 +1728,6 @@ namespace Codewars_Console_vs19
         //    return result;
         //}
         #endregion
-
-        #region My Solution
-        //public static int ParseInt(string s)
-        //{
-        //    #region Creatting a dictionary with Numbers and Letters
-        //    Dictionary<string, int> dict = new Dictionary<string, int>()
-        //    {
-        //        {"zero", 0},
-        //        {"one", 1},
-        //        {"two", 2},
-        //        {"three", 3},
-        //        {"four", 4},
-        //        {"five", 5},
-        //        {"six", 6},
-        //        {"seven", 7},
-        //        {"eight", 8},
-        //        {"nine", 9},
-        //        {"ten", 10},
-
-        //        {"eleven",11},
-        //        {"twelve",12},
-        //        {"thirteen",13},
-        //        {"fourteen",14},
-        //        {"fifteen",15},
-        //        {"sixteen",16},
-        //        {"seventeen",17},
-        //        {"eighteen",18},
-        //        {"nineteen",19},
-
-        //        {"twenty",20},
-        //        {"thirty",30},
-        //        {"forty",40},
-        //        {"fifty",50},
-        //        {"sixty",60},
-        //        {"seventy",70},
-        //        {"eighty",80},
-        //        {"ninety",90},
-
-        //        {"hundred",100},
-
-        //        {"thousand",1000},
-
-        //        {"lakh",100000},
-
-        //        {"million",1000000}
-        //    };
-        //    #endregion
-
-        //    s = s.Replace(" and", "");
-
-        //    //// 01 splitting into parts
-        //    Dictionary<string, string> splitted = new Dictionary<string, string>();
-        //    for (int i = 0; i < s.Length; i++)
-        //    {
-        //        if (s.Contains("million"))
-        //        {
-
-        //            splitted.Add("million", s.Split("million")[0]+ "million".Trim());
-        //            s = s.Split("million")[1].Trim();
-        //        }
-        //        else if (s.Contains("thousand"))
-        //        {
-        //            splitted.Add("thousand", s.Split("thousand")[0] + "thousand".Trim());
-        //            s = s.Split("thousand")[1].Trim();
-        //        }
-        //        else if (s.Contains("hundred"))
-        //        {
-        //            splitted.Add("hundred", s.Split("hundred")[0] + "hundred".Trim());
-        //            s = s.Split("hundred")[1].Trim();
-        //        }
-        //        else
-        //        {
-        //            splitted.Add("dcds", s.Trim() + " one");
-        //            s = "";
-        //        }
-
-        //    }
-
-        //    //// 02 continue
-        //    List<string> numList = new List<string>();
-        //    foreach (var item in splitted)
-        //    {
-        //        numList.Add(item.Value);
-        //    }
-
-        //    var ssss = numList.Select(x => x.Split(" ")).ToList();
-
-        //    //// getting the array in numbers
-        //    List<int> numsArray = new List<int>();
-        //    foreach (var item in ssss)
-        //    {
-        //        List<int> tmp = new List<int>();
-
-        //        for (int i = 0; i < item.Count(); i++)
-        //        {
-        //            if (item[i].Contains("-"))
-        //            {
-        //                string[] tmpArray = item[i].Split("-");
-        //                string frstNum = dict.Where(x => x.Key.ToUpper() == tmpArray[0].ToUpper()).Select(a => a.Value).First().ToString().Remove(1);
-        //                tmp.Add(Int32.Parse(frstNum + dict.Where(x => x.Key.ToUpper() == tmpArray[1].ToUpper()).Select(a => a.Value).First().ToString()));
-        //            }
-        //            else
-        //            {
-        //                tmp.Add(Int32.Parse(dict.Where(x => x.Key.ToUpper() == item[i].ToUpper()).Select(a => a.Value).First().ToString()));
-        //            }
-        //        }
-
-        //        List<int> TmpList = new List<int>();
-        //        for (int i = 0; i < tmp.Count-1; i++)
-        //        {
-        //            //// если последняя запись
-        //            if (i == tmp.Count() - 2)
-        //            {
-        //                TmpList.Add(tmp[i]);
-        //            }
-        //            //// если в записи 1 цифра
-        //            else if (tmp[i + 1].ToString().Length == 1)
-        //            {
-        //                var newNum = (tmp[i] + tmp[i + 1]);
-        //                TmpList.Add(newNum);
-        //                i++;
-        //            }
-        //            else
-        //            {
-        //                var newNum = tmp[i] * tmp[i + 1];
-        //                TmpList.Add(newNum);
-        //                i++;
-        //            }
-        //        }
-
-        //        numsArray.Add(TmpList.Sum() * tmp.Last());
-        //    }
-
-        //    return numsArray.Sum();
-        //}
-        #endregion
         #endregion
 
         #region 020 - 4kyu (Strip Comments) Complete the solution so that it strips all text that follows any of a set of comment markers passed in.
@@ -1355,28 +1738,58 @@ namespace Codewars_Console_vs19
         //    //Console.WriteLine(StripComments("a #b\nc\nd $e f g", new string[] { "#", "$" }));
         //}
 
-        #region from web 03 - интересно как находит символы в строке (linq)
+        #region My Solution
         public static string StripComments(string text, string[] commentSymbols)
         {
-            if (string.IsNullOrWhiteSpace(text) || commentSymbols.Length == 0) return string.Empty;
-            var result = new List<string>();
-            var rows = text.Split('\n');
+            List<string> beginList = text.Split(new[] { "\n" }, StringSplitOptions.None).ToList();
+            List<string> newList = new List<string>();
 
-            foreach (var row in rows)
+            foreach (var item in beginList)
             {
-                var str = row.TrimEnd();
-                foreach (var symbol in commentSymbols.Where(row.Contains)) //интересно как находит символы в строке (linq)
+                int FoundSymbols = 0;
+                foreach (string symbol in commentSymbols)
                 {
-                    var id = str.IndexOf(symbol, StringComparison.Ordinal);
-                    if (id == -1) continue;
-                    str = str.Substring(0, id).Trim();
+                    int symbolIndex = item.IndexOf(symbol);
+                    if (symbolIndex != -1)
+                    {
+                        newList.Add(item.Remove(symbolIndex).TrimEnd());
+                        FoundSymbols++;
+                    }
                 }
-
-                result.Add(str);
+                if (FoundSymbols == 0)
+                {
+                    newList.Add(item.TrimEnd());
+                }
             }
 
-            return string.Join("\n", result);
+            string result = string.Join("\n", newList);
+
+            return result;
         }
+        #endregion
+
+        #region from web 03 - интересно как находит символы в строке (linq)
+        //public static string StripComments(string text, string[] commentSymbols)
+        //{
+        //    if (string.IsNullOrWhiteSpace(text) || commentSymbols.Length == 0) return string.Empty;
+        //    var result = new List<string>();
+        //    var rows = text.Split('\n');
+
+        //    foreach (var row in rows)
+        //    {
+        //        var str = row.TrimEnd();
+        //        foreach (var symbol in commentSymbols.Where(row.Contains)) //интересно как находит символы в строке (linq)
+        //        {
+        //            var id = str.IndexOf(symbol, StringComparison.Ordinal);
+        //            if (id == -1) continue;
+        //            str = str.Substring(0, id).Trim();
+        //        }
+
+        //        result.Add(str);
+        //    }
+
+        //    return string.Join("\n", result);
+        //}
         #endregion
 
         #region from Web 02 - Regex
@@ -1398,37 +1811,6 @@ namespace Codewars_Console_vs19
         //    return string.Join("\n", lines);
         //}
         #endregion
-
-        #region My Solution
-        //public static string StripComments(string text, string[] commentSymbols)
-        //{
-        //    List<string> beginList = text.Split(new[] { "\n" }, StringSplitOptions.None).ToList();
-        //    List<string> newList = new List<string>();
-
-        //    foreach (var item in beginList)
-        //    {
-        //        int FoundSymbols = 0;
-        //        foreach (string symbol in commentSymbols)
-        //        {
-        //            int symbolIndex = item.IndexOf(symbol);
-        //            if (symbolIndex != -1)
-        //            {
-        //                newList.Add(item.Remove(symbolIndex).TrimEnd());
-        //                FoundSymbols++;
-        //            }
-        //        }
-        //        if (FoundSymbols==0)
-        //        {
-        //            newList.Add(item.TrimEnd());
-        //        }                
-        //    }
-
-        //    string result = string.Join("\n", newList);
-
-        //    return result;
-        //}
-        #endregion
-
         #endregion
 
         #region 019 - 5kyu (Directions Reduction) Write a function dirReduc which will take an array of strings and 
@@ -1449,18 +1831,68 @@ namespace Codewars_Console_vs19
         //    }
         //}
 
-        #region from Web 03 (Kozhanov)
-        public static string[] dirReduc(string[] arr)
+        #region My Solution
+        public static string[] dirReduc(String[] arr)
         {
-            var direction = string.Join(" ", arr);
+            List<string> newRecs = new List<string>();
 
-            for (var i = 0; i < arr.Length; i++)
+            string[] newarr = arr;
+
+            for (int a = 0; a < newarr.Length; a++)
             {
-                direction = Regex.Replace(direction, @"NORTH\s+SOUTH|SOUTH\s+NORTH|EAST\s+WEST|WEST\s+EAST", "");
+                newRecs.Clear();
+
+                if (newarr.Length == 1)
+                {
+                    newRecs.Add(newarr[0]);
+                }
+                else
+                {
+                    for (int i = 0; i < newarr.Length - 1; i++)
+                    {
+                        if (
+                            newarr[i] == "NORTH" && newarr[i + 1] == "SOUTH"
+                            ||
+                            newarr[i] == "SOUTH" && newarr[i + 1] == "NORTH"
+                            ||
+                            newarr[i] == "EAST" && newarr[i + 1] == "WEST"
+                            ||
+                            newarr[i] == "WEST" && newarr[i + 1] == "EAST"
+                            )
+                        {
+                            i++;
+                        }
+                        else
+                        {
+                            newRecs.Add(newarr[i]);
+                        }
+
+                        if (i == newarr.Length - 2)
+                        {
+                            newRecs.Add(newarr[i + 1]);
+                        }
+                    }
+                }
+
+                newarr = newRecs.ToArray();
             }
 
-            return direction.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            return newRecs.ToArray();
         }
+        #endregion
+
+        #region from Web 03 (Kozhanov)
+        //public static string[] dirReduc(string[] arr)
+        //{
+        //    var direction = string.Join(" ", arr);
+
+        //    for (var i = 0; i < arr.Length; i++)
+        //    {
+        //        direction = Regex.Replace(direction, @"NORTH\s+SOUTH|SOUTH\s+NORTH|EAST\s+WEST|WEST\s+EAST", "");
+        //    }
+
+        //    return direction.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+        //}
         #endregion
 
         #region from Web 02
@@ -1515,56 +1947,6 @@ namespace Codewars_Console_vs19
         //    return result;
         //}
         #endregion
-
-        #region My Solution
-        //public static string[] dirReduc(String[] arr)
-        //{
-        //    List<string> newRecs = new List<string>();
-
-        //    string[] newarr = arr;
-
-        //    for (int a = 0; a < newarr.Length; a++)
-        //    {
-        //        newRecs.Clear();
-
-        //        if (newarr.Length == 1)
-        //        {
-        //            newRecs.Add(newarr[0]);
-        //        }
-        //        else
-        //        {
-        //            for (int i = 0; i < newarr.Length - 1; i++)
-        //            {
-        //                if (
-        //                    newarr[i] == "NORTH" && newarr[i + 1] == "SOUTH"
-        //                    ||
-        //                    newarr[i] == "SOUTH" && newarr[i + 1] == "NORTH"
-        //                    ||
-        //                    newarr[i] == "EAST" && newarr[i + 1] == "WEST"
-        //                    ||
-        //                    newarr[i] == "WEST" && newarr[i + 1] == "EAST"
-        //                    )
-        //                {
-        //                    i++;
-        //                }
-        //                else
-        //                {
-        //                    newRecs.Add(newarr[i]);
-        //                }
-
-        //                if (i == newarr.Length - 2)
-        //                {
-        //                    newRecs.Add(newarr[i + 1]);
-        //                }
-        //            }
-        //        }
-
-        //        newarr= newRecs.ToArray();                
-        //    }
-
-        //    return newRecs.ToArray();
-        //}
-        #endregion
         #endregion
 
         #region 018 - 4kyu (Catching Car Mileage Numbers)
@@ -1593,34 +1975,271 @@ namespace Codewars_Console_vs19
         //    }
         //}
 
-        #region from Web 02
+        #region My Solution
         public static int IsInteresting(int number, List<int> awesomePhrases)
         {
-            int score = 2;
+            int isInterest = 0;
 
-            for (int i = 0; i < 3; i++)
+            int currentMillage = number;
+
+            int tmp = 1;
+
+            int curNumber = number;
+
+            #region 06 The digits match one of the values in the awesomePhrases array
+            for (int j = 0; j <= 2; j++)
             {
-                if (number > 99)
+                var awesome = awesomePhrases.Where(x => x == curNumber);
+
+                if (awesome.Count() != 0 && j == 0)
                 {
-                    if (awesomePhrases.Contains(number)) return score;
-                    if (AllEqual(number)) return score;
-                    if (AllFollowingAreZeros(number)) return score;
-                    if (IsPalindrome(number)) return score;
-                    if (IsIncrementing(number)) return score;
-                    if (IsDecrementing(number)) return score;
+                    isInterest = 2;
+                    break;
                 }
-                score = 1;
-                number++;
+                else if (awesome.Count() != 0 && j != 0)
+                {
+                    isInterest = 1;
+                    break;
+                }
+
+                curNumber++;
             }
-            return 0;
+            curNumber = 0;
+
+            if (isInterest == 2)
+            {
+                return isInterest;
+            }
+            #endregion
+
+            #region 05 The digits are a palindrome: 1221 or 73837
+
+            for (int j = 0; j <= 2; j++)
+            {
+                tmp = 1;
+
+                int[] numsArray = new int[(number + j).ToString().Length];
+                for (int i = 0; i < (number + j).ToString().Length; i++)
+                {
+                    numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
+                }
+
+
+                for (int i = 0; i < numsArray.Length - 1; i++)
+                {
+                    if (numsArray[i] == numsArray[numsArray.Length - 1 - i])
+                    {
+                        tmp++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (number > 99 && tmp == numsArray.Length && j == 0)
+                {
+                    isInterest = 2;
+                    break;
+                }
+                else if (number > 99 && tmp == numsArray.Length && j != 0)
+                {
+                    isInterest = 1;
+                    break;
+                }
+            }
+
+            if (isInterest == 2)
+            {
+                return isInterest;
+            }
+            #endregion
+
+            #region 04 The digits are sequential, decrementing‡: 4321
+
+            for (int j = 0; j <= 2; j++)
+            {
+                tmp = 1;
+
+                int[] numsArray = new int[(number + j).ToString().Length];
+                for (int i = 0; i < (number + j).ToString().Length; i++)
+                {
+                    numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
+                }
+
+                for (int i = 0; i < numsArray.Length - 1; i++)
+                {
+                    if (numsArray[i] == numsArray[i + 1] + 1)
+                    {
+                        tmp++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (number > 99 && tmp == numsArray.Length && j == 0)
+                {
+                    isInterest = 2;
+                    break;
+                }
+                else if (number > 99 && tmp == numsArray.Length && j != 0)
+                {
+                    isInterest = 1;
+                    break;
+                }
+            }
+
+            if (isInterest == 2)
+            {
+                return isInterest;
+            }
+            #endregion
+
+            #region 03 The digits are sequential, incementing: 1234
+            //////// For incrementing sequences, 0 should come after 9, and not before 1, as in 7890
+
+            for (int j = 0; j <= 2; j++)
+            {
+                tmp = 1;
+
+                int[] numsArray = new int[(number + j).ToString().Length];
+                for (int i = 0; i < (number + j).ToString().Length; i++)
+                {
+                    numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
+                }
+
+                for (int i = 0; i < numsArray.Length - 1; i++)
+                {
+                    if (i == (numsArray.Length - 2) && numsArray[i + 1] == 0)
+                    {
+                        numsArray[i + 1] = 10;
+                    }
+
+                    if (numsArray[i] == numsArray[i + 1] - 1)
+                    {
+                        tmp++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (number > 99 && tmp == numsArray.Length && j == 0)
+                {
+                    isInterest = 2;
+                    break;
+                }
+                else if (number > 99 && tmp == numsArray.Length && j != 0)
+                {
+                    isInterest = 1;
+                    break;
+                }
+            }
+            if (isInterest == 2)
+            {
+                return isInterest;
+            }
+            #endregion
+
+            #region 02 Every digit is the same number: 1111
+            for (int j = 0; j <= 2; j++)
+            {
+                tmp = 1;
+
+                int[] numsArray = new int[(number + j).ToString().Length];
+                for (int i = 0; i < (number + j).ToString().Length; i++)
+                {
+                    numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
+                }
+
+                for (int i = 0; i < numsArray.Length - 1; i++)
+                {
+                    if (numsArray[i] == numsArray[i + 1])
+                    {
+                        tmp++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (number > 99 && tmp == numsArray.Length && j == 0)
+                {
+                    isInterest = 2;
+                    break;
+                }
+                else if (number > 99 && tmp == numsArray.Length && j != 0)
+                {
+                    isInterest = 1;
+                    break;
+                }
+            }
+            if (isInterest == 2)
+            {
+                return isInterest;
+            }
+            #endregion
+
+            #region 01 Any digit followed by all zeros: 100, 90000
+            //// getting the number with nulls-as much as number's length - 1
+            int numWithNulls = 1;
+            for (int i = 0; i < number.ToString().Length - 1; i++)
+            {
+                numWithNulls = numWithNulls * 10;
+            }
+            int interestingNumberExact = (Int32.Parse(number.ToString().First().ToString()) * numWithNulls);
+            int interestingNumberClose = ((Int32.Parse(number.ToString().First().ToString()) + 1) * numWithNulls);
+
+            if (number > 99 && number == interestingNumberExact)
+            {
+                isInterest = 2;
+            }
+            else if (number > 97 && (number + 1 == interestingNumberClose || number + 2 == interestingNumberClose))
+            {
+                isInterest = 1;
+            }
+
+            if (isInterest == 2)
+            {
+                return isInterest;
+            }
+            #endregion
+
+            return isInterest;
         }
+        #endregion
 
-        private static bool IsDecrementing(int number) => "09876543210".Contains(number.ToString());
-        private static bool IsIncrementing(int number) => "01234567890".Contains(number.ToString());
-        private static bool AllEqual(int number) => number.ToString().Distinct().Count() == 1;
-        private static bool AllFollowingAreZeros(int number) => number.ToString().Skip(1).All(x => x == '0');
-        private static bool IsPalindrome(int number) => number.ToString() == string.Concat(number.ToString().Reverse());
+        #region from Web 02
+        //public static int IsInteresting(int number, List<int> awesomePhrases)
+        //{
+        //    int score = 2;
 
+        //    for (int i = 0; i < 3; i++)
+        //    {
+        //        if (number > 99)
+        //        {
+        //            if (awesomePhrases.Contains(number)) return score;
+        //            if (AllEqual(number)) return score;
+        //            if (AllFollowingAreZeros(number)) return score;
+        //            if (IsPalindrome(number)) return score;
+        //            if (IsIncrementing(number)) return score;
+        //            if (IsDecrementing(number)) return score;
+        //        }
+        //        score = 1;
+        //        number++;
+        //    }
+        //    return 0;
+        //}
+
+        //private static bool IsDecrementing(int number) => "09876543210".Contains(number.ToString());
+        //private static bool IsIncrementing(int number) => "01234567890".Contains(number.ToString());
+        //private static bool AllEqual(int number) => number.ToString().Distinct().Count() == 1;
+        //private static bool AllFollowingAreZeros(int number) => number.ToString().Skip(1).All(x => x == '0');
+        //private static bool IsPalindrome(int number) => number.ToString() == string.Concat(number.ToString().Reverse());
         #endregion
 
         #region from Web 01
@@ -1644,245 +2263,6 @@ namespace Codewars_Console_vs19
         //      || s.SequenceEqual(s.Reverse());
         //}
         #endregion
-
-        #region My Solution
-        //public static int IsInteresting(int number, List<int> awesomePhrases)
-        //{
-        //    int isInterest = 0;
-
-        //    int currentMillage = number;
-
-        //    int tmp = 1;
-
-        //    int curNumber = number;
-
-        //    #region 06 The digits match one of the values in the awesomePhrases array
-        //    for (int j = 0; j <= 2; j++)
-        //    {
-        //        var awesome = awesomePhrases.Where(x => x == curNumber);
-
-        //        if (awesome.Count() != 0 && j == 0)
-        //        {
-        //            isInterest = 2;
-        //            break;
-        //        }
-        //        else if (awesome.Count() != 0 && j != 0)
-        //        {
-        //            isInterest = 1;
-        //            break;
-        //        }
-
-        //        curNumber++;
-        //    }
-        //    curNumber = 0;
-
-        //    if (isInterest==2)
-        //    {
-        //        return isInterest;
-        //    }
-        //    #endregion
-
-        //    #region 05 The digits are a palindrome: 1221 or 73837
-
-        //    for (int j = 0; j <= 2; j++)
-        //    {
-        //        tmp = 1;
-
-        //        int[] numsArray = new int[(number + j).ToString().Length];
-        //        for (int i = 0; i < (number + j).ToString().Length; i++)
-        //        {
-        //            numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
-        //        }
-
-
-        //        for (int i = 0; i < numsArray.Length - 1; i++)
-        //        {
-        //            if (numsArray[i] == numsArray[numsArray.Length - 1 - i])
-        //            {
-        //                tmp++;
-        //            }
-        //            else
-        //            {
-        //                break;
-        //            }
-        //        }
-
-        //        if (number > 99 && tmp == numsArray.Length && j == 0)
-        //        {
-        //            isInterest = 2;
-        //            break;
-        //        }
-        //        else if (number > 99 && tmp == numsArray.Length && j != 0)
-        //        {
-        //            isInterest = 1;
-        //            break;
-        //        }
-        //    }
-
-        //    if (isInterest == 2)
-        //    {
-        //        return isInterest;
-        //    }
-        //    #endregion
-
-        //    #region 04 The digits are sequential, decrementing‡: 4321
-
-        //    for (int j = 0; j <= 2; j++)
-        //    {
-        //        tmp = 1;
-
-        //        int[] numsArray = new int[(number + j).ToString().Length];
-        //        for (int i = 0; i < (number + j).ToString().Length; i++)
-        //        {
-        //            numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
-        //        }
-
-        //        for (int i = 0; i < numsArray.Length - 1; i++)
-        //        {
-        //            if (numsArray[i] == numsArray[i + 1] + 1)
-        //            {
-        //                tmp++;
-        //            }
-        //            else
-        //            {
-        //                break;
-        //            }
-        //        }
-
-        //        if (number > 99 && tmp == numsArray.Length && j == 0)
-        //        {
-        //            isInterest = 2;
-        //            break;
-        //        }
-        //        else if (number > 99 && tmp == numsArray.Length && j != 0)
-        //        {
-        //            isInterest = 1;
-        //            break;
-        //        }
-        //    }
-
-        //    if (isInterest == 2)
-        //    {
-        //        return isInterest;
-        //    }
-        //    #endregion
-
-        //    #region 03 The digits are sequential, incementing: 1234
-        //    //////// For incrementing sequences, 0 should come after 9, and not before 1, as in 7890
-
-        //    for (int j = 0; j <= 2; j++)
-        //    {
-        //        tmp = 1;
-
-        //        int[] numsArray = new int[(number + j).ToString().Length];
-        //        for (int i = 0; i < (number + j).ToString().Length; i++)
-        //        {
-        //            numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
-        //        }
-
-        //        for (int i = 0; i < numsArray.Length - 1; i++)
-        //        {
-        //            if (i == (numsArray.Length - 2) && numsArray[i + 1] == 0)
-        //            {
-        //                numsArray[i + 1] = 10;
-        //            }
-
-        //            if (numsArray[i] == numsArray[i + 1] - 1)
-        //            {
-        //                tmp++;
-        //            }
-        //            else
-        //            {
-        //                break;
-        //            }
-        //        }
-
-        //        if (number > 99 && tmp == numsArray.Length && j == 0)
-        //        {
-        //            isInterest = 2;
-        //            break;
-        //        }
-        //        else if (number > 99 && tmp == numsArray.Length && j != 0)
-        //        {
-        //            isInterest = 1;
-        //            break;
-        //        }
-        //    }
-        //    if (isInterest == 2)
-        //    {
-        //        return isInterest;
-        //    }
-        //    #endregion
-
-        //    #region 02 Every digit is the same number: 1111
-        //    for (int j = 0; j <= 2; j++)
-        //    {
-        //        tmp = 1;
-
-        //        int[] numsArray = new int[(number + j).ToString().Length];
-        //        for (int i = 0; i < (number + j).ToString().Length; i++)
-        //        {
-        //            numsArray[i] = Int32.Parse((number + j).ToString()[i].ToString());
-        //        }
-
-        //        for (int i = 0; i < numsArray.Length - 1; i++)
-        //        {
-        //            if (numsArray[i] == numsArray[i + 1])
-        //            {
-        //                tmp++;
-        //            }
-        //            else
-        //            {
-        //                break;
-        //            }
-        //        }
-
-        //        if (number > 99 && tmp == numsArray.Length && j == 0)
-        //        {
-        //            isInterest = 2;
-        //            break;
-        //        }
-        //        else if (number > 99 && tmp == numsArray.Length && j != 0)
-        //        {
-        //            isInterest = 1;
-        //            break;
-        //        }
-        //    }
-        //    if (isInterest == 2)
-        //    {
-        //        return isInterest;
-        //    }
-        //    #endregion
-
-        //    #region 01 Any digit followed by all zeros: 100, 90000
-        //    //// getting the number with nulls-as much as number's length - 1
-        //    int numWithNulls = 1;
-        //    for (int i = 0; i < number.ToString().Length - 1; i++)
-        //    {
-        //        numWithNulls = numWithNulls * 10;
-        //    }
-        //    int interestingNumberExact = (Int32.Parse(number.ToString().First().ToString()) * numWithNulls);
-        //    int interestingNumberClose = ((Int32.Parse(number.ToString().First().ToString()) + 1) * numWithNulls);
-
-        //    if (number > 99 && number == interestingNumberExact)
-        //    {
-        //        isInterest = 2;
-        //    }
-        //    else if (number > 97 && (number + 1 == interestingNumberClose || number + 2 == interestingNumberClose))
-        //    {
-        //        isInterest = 1;
-        //    }
-
-        //    if (isInterest == 2)
-        //    {
-        //        return isInterest;
-        //    }
-        //    #endregion
-
-        //    return isInterest;
-        //}
-        #endregion
-
         #endregion
 
         #region 017 - 5kyu (Valid Parentheses) takes a string of parentheses, and determines if the order of the parentheses is valid
@@ -1937,20 +2317,19 @@ namespace Codewars_Console_vs19
             }
 
             return false;
-
         }
         #endregion
         #endregion
 
         #region 016 - 5kyu (Greed is Good) Your mission is to score a throw according to these rules
-        // Three 1's => 1000 points
-        // Three 6's =>  600 points
-        // Three 5's =>  500 points
-        // Three 4's =>  400 points
-        // Three 3's =>  300 points
-        // Three 2's =>  200 points
-        // One   1   =>  100 points
-        // One   5   =>   50 point
+        //// Three 1's => 1000 points
+        //// Three 6's =>  600 points
+        //// Three 5's =>  500 points
+        //// Three 4's =>  400 points
+        //// Three 3's =>  300 points
+        //// Three 2's =>  200 points
+        //// One   1   =>  100 points
+        //// One   5   =>   50 point
 
         //static void Main(string[] args)
         //{
@@ -1962,20 +2341,74 @@ namespace Codewars_Console_vs19
         //    Console.WriteLine($"The Score is {Score(new int[] { 2, 4, 4, 5, 4 })}"); // "Should be 450");
         //}
 
-        #region from Web 02
+        #region My Solution
         public static int Score(int[] dice)
         {
-            int[] tripleValue = { 0, 1000, 200, 300, 400, 500, 600 };
-            int[] singleValue = { 0, 100, 0, 0, 0, 50, 0 };
+            int score = 0;
 
-            int value = 0;
-            for (int dieSide = 1; dieSide <= 6; dieSide++)
+            if (dice.Where(x => x == 1).Count() >= 3)
             {
-                int countRolls = dice.Where(outcome => outcome == dieSide).Count();
-                value += tripleValue[dieSide] * (countRolls / 3) + singleValue[dieSide] * (countRolls % 3);
+                score += 1000;
             }
-            return value;
+            else if (dice.Where(x => x == 6).Count() >= 3)
+            {
+                score += 600;
+            }
+            else if (dice.Where(x => x == 5).Count() >= 3)
+            {
+                score += 500;
+            }
+            else if (dice.Where(x => x == 4).Count() >= 3)
+            {
+                score += 400;
+            }
+            else if (dice.Where(x => x == 3).Count() >= 3)
+            {
+                score += 300;
+            }
+            else if (dice.Where(x => x == 2).Count() >= 3)
+            {
+                score += 200;
+            }
+
+            int OnesCount = dice.Where(x => x == 1).Count();
+            if (OnesCount < 3)
+            {
+                score = score + 100 * OnesCount;
+            }
+            else if (OnesCount > 3)
+            {
+                score = score + 100 * (OnesCount - 3);
+            }
+
+            int FivesCount = dice.Where(x => x == 5).Count();
+            if (FivesCount < 3)
+            {
+                score = score + 50 * FivesCount;
+            }
+            else if (FivesCount > 3)
+            {
+                score = score + 50 * (FivesCount - 3);
+            }
+
+            return score;
         }
+        #endregion
+
+        #region from Web 02
+        //public static int Score(int[] dice)
+        //{
+        //    int[] tripleValue = { 0, 1000, 200, 300, 400, 500, 600 };
+        //    int[] singleValue = { 0, 100, 0, 0, 0, 50, 0 };
+
+        //    int value = 0;
+        //    for (int dieSide = 1; dieSide <= 6; dieSide++)
+        //    {
+        //        int countRolls = dice.Where(outcome => outcome == dieSide).Count();
+        //        value += tripleValue[dieSide] * (countRolls / 3) + singleValue[dieSide] * (countRolls % 3);
+        //    }
+        //    return value;
+        //}
         #endregion
 
         #region from Web 01
@@ -2031,60 +2464,6 @@ namespace Codewars_Console_vs19
         //    }
         //} 
         #endregion
-
-        #region My Solution
-        //public static int Score(int[] dice)
-        //{
-        //    int score = 0;
-
-        //    if (dice.Where(x => x == 1).Count() >= 3)
-        //    {
-        //        score += 1000;
-        //    }
-        //    else if (dice.Where(x => x == 6).Count() >= 3)
-        //    {
-        //        score += 600;
-        //    }
-        //    else if (dice.Where(x => x == 5).Count() >= 3)
-        //    {
-        //        score += 500;
-        //    }
-        //    else if (dice.Where(x => x == 4).Count() >= 3)
-        //    {
-        //        score += 400;
-        //    }
-        //    else if (dice.Where(x => x == 3).Count() >= 3)
-        //    {
-        //        score += 300;
-        //    }
-        //    else if (dice.Where(x => x == 2).Count() >= 3)
-        //    {
-        //        score += 200;
-        //    }
-
-        //    int OnesCount = dice.Where(x => x == 1).Count();
-        //    if (OnesCount < 3)
-        //    {
-        //        score = score + 100 * OnesCount;
-        //    }
-        //    else if (OnesCount > 3)
-        //    {
-        //        score = score + 100 * (OnesCount - 3);
-        //    }
-
-        //    int FivesCount = dice.Where(x => x == 5).Count();
-        //    if (FivesCount < 3)
-        //    {
-        //        score = score + 50 * FivesCount;
-        //    }
-        //    else if (FivesCount > 3)
-        //    {
-        //        score = score + 50 * (FivesCount - 3);
-        //    }
-
-        //    return score;
-        //} 
-        #endregion
         #endregion
 
         #region 015 - 4kyu (Adding Big Numbers) Write a function that returns the sum of two numbers. 
@@ -2133,41 +2512,285 @@ namespace Codewars_Console_vs19
         //    Console.WriteLine($"The sum of all intervals = {SumIntervals(Interval)}");
         //}
 
-        #region from Web 02
+        #region My Solution 01
+        public class myRecord
+        {
+            public int? Item1 { get; set; }
+            public int? Item2 { get; set; }
+        }
+
         public static int SumIntervals((int, int)[] intervals)
         {
-            //// сначала создаем отсортированные список интервалоа
-            var orderedInterval = (from interval in intervals
-                                   orderby interval.Item1, interval.Item2
-                                   select interval//;
-                                  ).ToList();
+            List<myRecord> FilledIntervals = new List<myRecord>();
 
-            int sum = 0;
-            //// и началу и концу присваиваем минимальное значение для переменной
-            int begin = Int32.MinValue;
-            int end = Int32.MinValue;
+            int SumIntervals = 0;
 
-            foreach (var item in orderedInterval)
+            for (int i = 0; i < intervals.Length; i++)
             {
-                //// если начало интервала больше последнего минимального конца
-                bool newBegin = item.Item1 > end;
-                if (newBegin)
+                myRecord currentLeft = new myRecord();
+                if (FilledIntervals.Where(x => intervals[i].Item1 <= x.Item2 && intervals[i].Item1 >= x.Item1).Count() > 0)
                 {
-                    //// то к результату прибавляем значение равное последний конец - последнее начало
-                    /// (при первом круге цикла = 0)
-                    sum += end - begin;
-                    //// а также передвигаем последнее начало
-                    /// (при первом круге цикла = минимальному Item1 из массива)
-                    begin = item.Item1;
+                    currentLeft = FilledIntervals.Where(x => intervals[i].Item1 <= x.Item2 && intervals[i].Item1 >= x.Item1).First();
                 }
 
-                //// передвигаем конец, присвоив ему максимальное текущее значение
-                end = item.Item2 > end ? item.Item2 : end;
+                myRecord currentRight = new myRecord();
+                if (FilledIntervals.Where(x => intervals[i].Item2 <= x.Item2 && intervals[i].Item2 >= x.Item1).Count() > 0)
+                {
+                    currentRight = FilledIntervals.Where(x => intervals[i].Item2 <= x.Item2 && intervals[i].Item2 >= x.Item1).First();
+                }
+
+                int? minLeft = null;
+                int? maxRight = null;
+
+                if (FilledIntervals.Where(x => x.Item1 > intervals[i].Item1).Count() > 0)
+                {
+                    minLeft = (from arr in FilledIntervals where arr.Item1 > intervals[i].Item1 orderby arr.Item1 select arr.Item1).First();
+                }
+                if (minLeft != null)
+                {
+                    if (FilledIntervals.Where(x => x.Item2 < intervals[i].Item2).Count() > 0)
+                    {
+                        maxRight = (from arr in FilledIntervals where arr.Item2 < intervals[i].Item2 orderby arr.Item2 descending select arr.Item2).First();
+                    }
+                }
+
+                if (intervals[i].Item1 < minLeft && intervals[i].Item2 > maxRight && maxRight > minLeft && currentLeft.Item1 != null && currentRight.Item1 == null)
+                {
+                    var existing = FilledIntervals
+                                  .Where(x => x.Item1 >= minLeft && x.Item2 <= maxRight)
+                                  .ToList();
+
+
+                    ////// создаю временную запись с последними данными
+                    myRecord tmpFilledIntervals = new myRecord
+                    {
+                        Item1 = intervals[i].Item1,
+                        Item2 = intervals[i].Item2
+                    };
+
+                    ////// из моего списка удаляю найденные выше записи
+                    foreach (var item in existing)
+                    {
+                        FilledIntervals.Remove(item);
+                    }
+
+                    ////// вместо удаленных добавляю новую с последними данными
+                    FilledIntervals.Add(tmpFilledIntervals);
+
+                    //// левый
+                    ////удаляю из моего списка запись с таким же интервалами что и текущая
+                    var toRemove = FilledIntervals
+                                  .Where(x => x.Item1 == intervals[i].Item1 && x.Item2 == intervals[i].Item2)
+                                  .First();
+                    FilledIntervals.Remove(toRemove);
+
+                    currentLeft.Item2 = intervals[i].Item2;
+                }
+                else if (intervals[i].Item1 < minLeft && intervals[i].Item2 > maxRight && maxRight > minLeft && currentLeft.Item1 == null && currentRight.Item1 != null)
+                {
+                    //// внутренний
+                    var existing = FilledIntervals
+                                  .Where(x => x.Item1 >= minLeft && x.Item2 <= maxRight)
+                                  .ToList();
+
+
+                    ////// создаю временную запись с последними данными
+                    myRecord tmpFilledIntervals = new myRecord
+                    {
+                        Item1 = intervals[i].Item1,
+                        Item2 = intervals[i].Item2
+                    };
+
+                    ////// из моего списка удаляю найденные выше записи
+                    foreach (var item in existing)
+                    {
+                        FilledIntervals.Remove(item);
+                    }
+
+                    ////// вместо удаленных добавляю новую с последними данными
+                    FilledIntervals.Add(tmpFilledIntervals);
+
+                    //// правый
+                    ////удаляю из моего списка запись с таким же интервалами что и текущая
+                    var toRemove = FilledIntervals
+                                  .Where(x => x.Item1 == intervals[i].Item1 && x.Item2 == intervals[i].Item2)
+                                  .First();
+                    FilledIntervals.Remove(toRemove);
+                    //////// в моем списке обновляю найденную выше запись
+                    currentRight.Item1 = intervals[i].Item1;
+                }
+                else if (intervals[i].Item1 < minLeft && intervals[i].Item2 > maxRight && maxRight > minLeft && currentLeft.Item1 != null && currentRight.Item1 != null)
+                {
+                    //// внутренний
+                    var existing = FilledIntervals
+                                  .Where(x => x.Item1 >= minLeft && x.Item2 <= maxRight)
+                                  .ToList();
+
+                    ////// создаю временную запись с последними данными
+                    myRecord tmpFilledIntervals = new myRecord
+                    {
+                        Item1 = intervals[i].Item1,
+                        Item2 = intervals[i].Item2
+                    };
+
+                    ////// из моего списка удаляю найденные выше записи
+                    foreach (var item in existing)
+                    {
+                        FilledIntervals.Remove(item);
+                    }
+
+                    ////// вместо удаленных добавляю новую с последними данными
+                    FilledIntervals.Add(tmpFilledIntervals);
+                    //}
+
+                    //// правый
+                    ////удаляю из моего списка запись с таким же интервалами что и текущая
+                    var toRemove = FilledIntervals
+                                  .Where(x => x.Item1 == intervals[i].Item1 && x.Item2 == intervals[i].Item2)
+                                  .First();
+                    FilledIntervals.Remove(toRemove);
+
+                    ////// создаю временную запись с последними данными
+                    myRecord tmpFilledIntervalsNew = new myRecord
+                    {
+                        Item1 = currentLeft.Item1,
+                        Item2 = currentRight.Item2
+                    };
+
+                    ////// из моего списка удаляю найденные выше записи
+                    FilledIntervals.Remove(currentLeft);
+                    FilledIntervals.Remove(currentRight);
+
+                    ////// вместо удаленных добавляю новую с последними данными
+                    FilledIntervals.Add(tmpFilledIntervalsNew);
+                }
+                else if (intervals[i].Item1 < minLeft && intervals[i].Item2 > maxRight && maxRight > minLeft)
+                {
+                    var existing = FilledIntervals
+                                  .Where(x => x.Item1 >= minLeft && x.Item2 <= maxRight)
+                                  .ToList();
+
+                    ////// создаю временную запись с последними данными
+                    myRecord tmpFilledIntervals = new myRecord
+                    {
+                        Item1 = intervals[i].Item1,
+                        Item2 = intervals[i].Item2
+                    };
+
+                    ////// из моего списка удаляю найденные выше записи
+                    foreach (var item in existing)
+                    {
+                        FilledIntervals.Remove(item);
+                    }
+
+                    ////// вместо удаленных добавляю новую с последними данными
+                    FilledIntervals.Add(tmpFilledIntervals);
+                }
+                else if (currentLeft.Item1 == null && currentRight.Item1 == null)
+                {
+                    FilledIntervals.Add(new myRecord
+                    {
+                        Item1 = intervals[i].Item1,
+                        Item2 = intervals[i].Item2
+                    });
+                }
+                else if (currentLeft.Item1 != null && currentRight.Item1 == null)
+                {
+                    int commonLeft = ((int)currentLeft.Item2 - intervals[i].Item1);
+
+                    int numToAdd = (intervals[i].Item2 - intervals[i].Item1) - commonLeft;
+
+                    if (numToAdd > 0)
+                    {
+                        //////// в моем списке обновляю найденную выше запись
+                        currentLeft.Item2 = intervals[i].Item2;
+                    }
+                }
+                else if (currentLeft.Item1 == null && currentRight.Item1 != null)
+                {
+                    int commonRight = (intervals[i].Item2 - (int)currentRight.Item1);
+
+                    int numToAdd = (intervals[i].Item2 - intervals[i].Item1) - commonRight;
+
+                    if (numToAdd > 0)
+                    {
+                        //////// в моем списке обновляю найденную выше запись
+                        currentRight.Item1 = intervals[i].Item1;
+                    }
+                }
+                else if (currentLeft.Item1 != null && currentRight.Item1 != null)
+                {
+                    int commonLeft = ((int)currentLeft.Item2 - intervals[i].Item1);
+                    int commonRight = (intervals[i].Item2 - (int)currentRight.Item1);
+
+                    int numToAdd = (intervals[i].Item2 - intervals[i].Item1)
+                                    - commonLeft - commonRight;
+
+                    if (numToAdd > 0)
+                    {
+                        ////// создаю временную запись с последними данными
+                        myRecord tmpFilledIntervals = new myRecord
+                        {
+                            Item1 = currentLeft.Item1,
+                            Item2 = currentRight.Item2
+                        };
+
+                        ////// из моего списка удаляю найденные выше записи
+                        FilledIntervals.Remove(currentLeft);
+                        FilledIntervals.Remove(currentRight);
+
+                        ////// вместо удаленных добавляю новую с последними данными
+                        FilledIntervals.Add(tmpFilledIntervals);
+                    }
+                }
             }
-            //// после окончания цикла считаем результат, прибавив к нему значение равное последний конец - последнее начало
-            sum += end - begin;
-            return sum;
+
+            foreach (var item in FilledIntervals)
+            {
+                Console.WriteLine($"interval from {item.Item1} to {item.Item2}");
+
+                SumIntervals = SumIntervals + ((int)item.Item2 - (int)item.Item1);
+            }
+
+            return SumIntervals;
         }
+        #endregion
+
+        #region from Web 02
+        //public static int SumIntervals((int, int)[] intervals)
+        //{
+        //    //// сначала создаем отсортированные список интервалоа
+        //    var orderedInterval = (from interval in intervals
+        //                           orderby interval.Item1, interval.Item2
+        //                           select interval//;
+        //                          ).ToList();
+
+        //    int sum = 0;
+        //    //// и началу и концу присваиваем минимальное значение для переменной
+        //    int begin = Int32.MinValue;
+        //    int end = Int32.MinValue;
+
+        //    foreach (var item in orderedInterval)
+        //    {
+        //        //// если начало интервала больше последнего минимального конца
+        //        bool newBegin = item.Item1 > end;
+        //        if (newBegin)
+        //        {
+        //            //// то к результату прибавляем значение равное последний конец - последнее начало
+        //            /// (при первом круге цикла = 0)
+        //            sum += end - begin;
+        //            //// а также передвигаем последнее начало
+        //            /// (при первом круге цикла = минимальному Item1 из массива)
+        //            begin = item.Item1;
+        //        }
+
+        //        //// передвигаем конец, присвоив ему максимальное текущее значение
+        //        end = item.Item2 > end ? item.Item2 : end;
+        //    }
+        //    //// после окончания цикла считаем результат, прибавив к нему значение равное последний конец - последнее начало
+        //    sum += end - begin;
+        //    return sum;
+        //}
         #endregion
 
         #region from Web 01 (Зависает при больших числах напр. (int, int)[] Interval = new (int, int)[] { (0, int.MaxValue) };
@@ -2182,252 +2805,6 @@ namespace Codewars_Console_vs19
         //      .Count();
         //}
         #endregion
-
-        #region My Solution 01
-        //public class myRecord
-        //{
-        //    public int? Item1 { get; set; }
-        //    public int? Item2 { get; set; }
-        //}
-
-        //public static int SumIntervals((int, int)[] intervals)
-        //{
-        //    List<myRecord> FilledIntervals = new List<myRecord>();
-
-        //    int SumIntervals = 0;
-
-        //    for (int i = 0; i < intervals.Length; i++)
-        //    {
-        //        myRecord currentLeft = new myRecord();
-        //        if (FilledIntervals.Where(x => intervals[i].Item1 <= x.Item2 && intervals[i].Item1 >= x.Item1).Count() > 0)
-        //        {
-        //            currentLeft = FilledIntervals.Where(x => intervals[i].Item1 <= x.Item2 && intervals[i].Item1 >= x.Item1).First();
-        //        }
-
-        //        myRecord currentRight = new myRecord();
-        //        if (FilledIntervals.Where(x => intervals[i].Item2 <= x.Item2 && intervals[i].Item2 >= x.Item1).Count() > 0)
-        //        {
-        //            currentRight = FilledIntervals.Where(x => intervals[i].Item2 <= x.Item2 && intervals[i].Item2 >= x.Item1).First();
-        //        }
-
-        //        int? minLeft = null;
-        //        int? maxRight = null;
-
-        //        if (FilledIntervals.Where(x => x.Item1 > intervals[i].Item1).Count() > 0)
-        //        {
-        //            minLeft = (from arr in FilledIntervals where arr.Item1 > intervals[i].Item1 orderby arr.Item1 select arr.Item1).First();
-        //        }
-        //        if (minLeft != null)
-        //        {
-        //            if (FilledIntervals.Where(x => x.Item2 < intervals[i].Item2).Count() > 0)
-        //            {
-        //                maxRight = (from arr in FilledIntervals where arr.Item2 < intervals[i].Item2 orderby arr.Item2 descending select arr.Item2).First();
-        //            }
-        //        }
-
-        //        if (intervals[i].Item1 < minLeft && intervals[i].Item2 > maxRight && maxRight > minLeft && currentLeft.Item1 != null && currentRight.Item1 == null)
-        //        {
-        //            var existing = FilledIntervals
-        //                          .Where(x => x.Item1 >= minLeft && x.Item2 <= maxRight)
-        //                          .ToList();
-
-
-        //            ////// создаю временную запись с последними данными
-        //            myRecord tmpFilledIntervals = new myRecord
-        //            {
-        //                Item1 = intervals[i].Item1,
-        //                Item2 = intervals[i].Item2
-        //            };
-
-        //            ////// из моего списка удаляю найденные выше записи
-        //            foreach (var item in existing)
-        //            {
-        //                FilledIntervals.Remove(item);
-        //            }
-
-        //            ////// вместо удаленных добавляю новую с последними данными
-        //            FilledIntervals.Add(tmpFilledIntervals);
-
-        //            //// левый
-        //            ////удаляю из моего списка запись с таким же интервалами что и текущая
-        //            var toRemove = FilledIntervals
-        //                          .Where(x => x.Item1 == intervals[i].Item1 && x.Item2 == intervals[i].Item2)
-        //                          .First();
-        //            FilledIntervals.Remove(toRemove);
-
-        //            currentLeft.Item2 = intervals[i].Item2;
-        //        }
-        //        else if (intervals[i].Item1 < minLeft && intervals[i].Item2 > maxRight && maxRight > minLeft && currentLeft.Item1 == null && currentRight.Item1 != null)
-        //        {
-        //            //// внутренний
-        //            var existing = FilledIntervals
-        //                          .Where(x => x.Item1 >= minLeft && x.Item2 <= maxRight)
-        //                          .ToList();
-
-
-        //            ////// создаю временную запись с последними данными
-        //            myRecord tmpFilledIntervals = new myRecord
-        //            {
-        //                Item1 = intervals[i].Item1,
-        //                Item2 = intervals[i].Item2
-        //            };
-
-        //            ////// из моего списка удаляю найденные выше записи
-        //            foreach (var item in existing)
-        //            {
-        //                FilledIntervals.Remove(item);
-        //            }
-
-        //            ////// вместо удаленных добавляю новую с последними данными
-        //            FilledIntervals.Add(tmpFilledIntervals);
-
-        //            //// правый
-        //            ////удаляю из моего списка запись с таким же интервалами что и текущая
-        //            var toRemove = FilledIntervals
-        //                          .Where(x => x.Item1 == intervals[i].Item1 && x.Item2 == intervals[i].Item2)
-        //                          .First();
-        //            FilledIntervals.Remove(toRemove);
-        //            //////// в моем списке обновляю найденную выше запись
-        //            currentRight.Item1 = intervals[i].Item1;
-        //        }
-        //        else if (intervals[i].Item1 < minLeft && intervals[i].Item2 > maxRight && maxRight > minLeft && currentLeft.Item1 != null && currentRight.Item1 != null)
-        //        {
-        //            //// внутренний
-        //            var existing = FilledIntervals
-        //                          .Where(x => x.Item1 >= minLeft && x.Item2 <= maxRight)
-        //                          .ToList();
-
-        //            ////// создаю временную запись с последними данными
-        //            myRecord tmpFilledIntervals = new myRecord
-        //            {
-        //                Item1 = intervals[i].Item1,
-        //                Item2 = intervals[i].Item2
-        //            };
-
-        //            ////// из моего списка удаляю найденные выше записи
-        //            foreach (var item in existing)
-        //            {
-        //                FilledIntervals.Remove(item);
-        //            }
-
-        //            ////// вместо удаленных добавляю новую с последними данными
-        //            FilledIntervals.Add(tmpFilledIntervals);
-        //            //}
-
-        //            //// правый
-        //            ////удаляю из моего списка запись с таким же интервалами что и текущая
-        //            var toRemove = FilledIntervals
-        //                          .Where(x => x.Item1 == intervals[i].Item1 && x.Item2 == intervals[i].Item2)
-        //                          .First();
-        //            FilledIntervals.Remove(toRemove);
-
-        //            ////// создаю временную запись с последними данными
-        //            myRecord tmpFilledIntervalsNew = new myRecord
-        //            {
-        //                Item1 = currentLeft.Item1,
-        //                Item2 = currentRight.Item2
-        //            };
-
-        //            ////// из моего списка удаляю найденные выше записи
-        //            FilledIntervals.Remove(currentLeft);
-        //            FilledIntervals.Remove(currentRight);
-
-        //            ////// вместо удаленных добавляю новую с последними данными
-        //            FilledIntervals.Add(tmpFilledIntervalsNew);
-        //        }
-        //        else if (intervals[i].Item1 < minLeft && intervals[i].Item2 > maxRight && maxRight > minLeft)
-        //        {
-        //            var existing = FilledIntervals
-        //                          .Where(x => x.Item1 >= minLeft && x.Item2 <= maxRight)
-        //                          .ToList();
-
-        //            ////// создаю временную запись с последними данными
-        //            myRecord tmpFilledIntervals = new myRecord
-        //            {
-        //                Item1 = intervals[i].Item1,
-        //                Item2 = intervals[i].Item2
-        //            };
-
-        //            ////// из моего списка удаляю найденные выше записи
-        //            foreach (var item in existing)
-        //            {
-        //                FilledIntervals.Remove(item);
-        //            }
-
-        //            ////// вместо удаленных добавляю новую с последними данными
-        //            FilledIntervals.Add(tmpFilledIntervals);
-        //        }
-        //        else if (currentLeft.Item1 == null && currentRight.Item1 == null)
-        //        {
-        //            FilledIntervals.Add(new myRecord
-        //            {
-        //                Item1 = intervals[i].Item1,
-        //                Item2 = intervals[i].Item2
-        //            });
-        //        }
-        //        else if (currentLeft.Item1 != null && currentRight.Item1 == null)
-        //        {
-        //            int commonLeft = ((int)currentLeft.Item2 - intervals[i].Item1);
-
-        //            int numToAdd = (intervals[i].Item2 - intervals[i].Item1) - commonLeft;
-
-        //            if (numToAdd > 0)
-        //            {
-        //                //////// в моем списке обновляю найденную выше запись
-        //                currentLeft.Item2 = intervals[i].Item2;
-        //            }
-        //        }
-        //        else if (currentLeft.Item1 == null && currentRight.Item1 != null)
-        //        {
-        //            int commonRight = (intervals[i].Item2 - (int)currentRight.Item1);
-
-        //            int numToAdd = (intervals[i].Item2 - intervals[i].Item1) - commonRight;
-
-        //            if (numToAdd > 0)
-        //            {
-        //                //////// в моем списке обновляю найденную выше запись
-        //                currentRight.Item1 = intervals[i].Item1;
-        //            }
-        //        }
-        //        else if (currentLeft.Item1 != null && currentRight.Item1 != null)
-        //        {
-        //            int commonLeft = ((int)currentLeft.Item2 - intervals[i].Item1);
-        //            int commonRight = (intervals[i].Item2 - (int)currentRight.Item1);
-
-        //            int numToAdd = (intervals[i].Item2 - intervals[i].Item1)
-        //                            - commonLeft - commonRight;
-
-        //            if (numToAdd > 0)
-        //            {
-        //                ////// создаю временную запись с последними данными
-        //                myRecord tmpFilledIntervals = new myRecord
-        //                {
-        //                    Item1 = currentLeft.Item1,
-        //                    Item2 = currentRight.Item2
-        //                };
-
-        //                ////// из моего списка удаляю найденные выше записи
-        //                FilledIntervals.Remove(currentLeft);
-        //                FilledIntervals.Remove(currentRight);
-
-        //                ////// вместо удаленных добавляю новую с последними данными
-        //                FilledIntervals.Add(tmpFilledIntervals);
-        //            }
-        //        }
-        //    }
-
-        //    foreach (var item in FilledIntervals)
-        //    {
-        //        Console.WriteLine($"interval from {item.Item1} to {item.Item2}");
-
-        //        SumIntervals = SumIntervals + ((int)item.Item2 - (int)item.Item1);
-        //    }
-
-        //    return SumIntervals;
-        //}
-        #endregion
-
-
         #endregion
 
         #region 013 - 5kyu (PaginationHelper) The class is designed to take in an array of values and 
@@ -2580,107 +2957,110 @@ namespace Codewars_Console_vs19
         #endregion
 
         #region 012 - 6kyu (Find the missing letter) Write a method that takes an array of consecutive (increasing) letters as input and that returns the missing letter in the array.
+
         //static void Main(string[] args)
         //{
         //    Console.WriteLine(FindMissingLetter(new[] { 'a', 'b', 'c', 'd', 'f' }));
         //}
 
+        #region My Solution 01
         public static char FindMissingLetter(char[] array)
         {
-            #region from Web
-            for (int i = 0; i < array.Length - 1; i++)
+            #region Creating an alphabet
+            List<char> alphabet = new List<char>()
             {
-                #region for clarify
-                char aa = array[i];
-                char bb = array[i + 1];
-                int cc = bb - aa;
-                int dd = aa + 1;
-
-                //// int to char
-                char ee = (char)dd;
-                #endregion
-
-
-                if (array[i + 1] - array[i] > 1)
-                {
-                    return (char)(array[i] + 1);
-                }
-            }
-
-            return ' ';
-
+                'a',
+                'b',
+                'c',
+                'd',
+                'e',
+                'f',
+                'g',
+                'h',
+                'i',
+                'j',
+                'k',
+                'l',
+                'm',
+                'n',
+                'o',
+                'p',
+                'q',
+                'r',
+                's',
+                't',
+                'u',
+                'v',
+                'w',
+                'x',
+                'y',
+                'z',
+                'A',
+                'B',
+                'C',
+                'D',
+                'E',
+                'F',
+                'G',
+                'H',
+                'I',
+                'J',
+                'K',
+                'L',
+                'M',
+                'N',
+                'O',
+                'P',
+                'Q',
+                'R',
+                'S',
+                'T',
+                'U',
+                'V',
+                'W',
+                'X',
+                'Y',
+                'Z'
+            };
             #endregion
 
-            #region My Solution 01
-            //#region Creating an alphabet
-            //List<char> alphabet = new List<char>()
-            //{
-            //    'a',
-            //    'b',
-            //    'c',
-            //    'd',
-            //    'e',
-            //    'f',
-            //    'g',
-            //    'h',
-            //    'i',
-            //    'j',
-            //    'k',
-            //    'l',
-            //    'm',
-            //    'n',
-            //    'o',
-            //    'p',
-            //    'q',
-            //    'r',
-            //    's',
-            //    't',
-            //    'u',
-            //    'v',
-            //    'w',
-            //    'x',
-            //    'y',
-            //    'z',
-            //    'A',
-            //    'B',
-            //    'C',
-            //    'D',
-            //    'E',
-            //    'F',
-            //    'G',
-            //    'H',
-            //    'I',
-            //    'J',
-            //    'K',
-            //    'L',
-            //    'M',
-            //    'N',
-            //    'O',
-            //    'P',
-            //    'Q',
-            //    'R',
-            //    'S',
-            //    'T',
-            //    'U',
-            //    'V',
-            //    'W',
-            //    'X',
-            //    'Y',
-            //    'Z'
-            //};
-            //#endregion
+            int startIndex = alphabet.IndexOf(array.First());
 
-            //int startIndex = alphabet.IndexOf(array.First());
+            List<char> allChars = alphabet.Skip(startIndex).Take(array.Length + 1).ToList();
 
-            //List<char> allChars = alphabet.Skip(startIndex).Take(array.Length + 1).ToList();
-
-            //return allChars.Except(array.ToList()).First();
-
-            #endregion
+            return allChars.Except(array.ToList()).First();
         }
         #endregion
 
+        #region from Web
+        //public static char FindMissingLetter(char[] array)
+        //{
+        //    for (int i = 0; i < array.Length - 1; i++)
+        //    {
+        //        #region for clarify
+        //        char aa = array[i];
+        //        char bb = array[i + 1];
+        //        int cc = bb - aa;
+        //        int dd = aa + 1;
+
+        //        //// int to char
+        //        char ee = (char)dd;
+        //        #endregion
+
+
+        //        if (array[i + 1] - array[i] > 1)
+        //        {
+        //            return (char)(array[i] + 1);
+        //        }
+        //    }
+
+        //    return ' ';
+        //}
+        #endregion
+        #endregion
+
         #region 011 - 6kyu (Sort the odd) Your task is to sort ascending odd numbers but even numbers must be on their places
+
         //static void Main(string[] args)
         //{
         //    foreach (var item in SortArray(new int[] { 5, 3, 1, 8, 0 }))
@@ -2691,7 +3071,6 @@ namespace Codewars_Console_vs19
 
         public static int[] SortArray(int[] array)
         {
-            #region My Solution 01
             int[] OddSorted = array.Where(x => x % 2 == 1).OrderBy(x => x).ToArray();
 
             int[] newArr = new int[array.Length];
@@ -2712,9 +3091,6 @@ namespace Codewars_Console_vs19
             }
 
             return newArr;
-
-            #endregion
-
         }
         #endregion
 
@@ -2738,8 +3114,6 @@ namespace Codewars_Console_vs19
 
         public static string[] TowerBuilder(int nFloors)
         {
-            #region My Solution 01
-
             List<string> building = new List<string>();
 
             for (int i = nFloors; i > 0; i--)
@@ -2763,13 +3137,11 @@ namespace Codewars_Console_vs19
             }
 
             return building.OrderBy(x => x).ToArray();
-
-            #endregion
-
         }
         #endregion
 
         #region 009 - 6kyu (Delete occurrences of an element if it occurs more than n times)
+
         //static void Main(string[] args)
         //{
         //    foreach (var item in DeleteNth(new int[] { 1, 1, 3, 3, 7, 2, 2, 2, 2 }, 3))
@@ -2778,10 +3150,9 @@ namespace Codewars_Console_vs19
         //    }
         //}
 
+        #region My Solution 02
         public static int[] DeleteNth(int[] arr, int x)
         {
-            #region My Solution 02
-
             List<int> collection = new List<int>();
 
             for (int i = 0; i < arr.Length; i++)
@@ -2793,58 +3164,61 @@ namespace Codewars_Console_vs19
             }
 
             return collection.ToArray();
-
-            #endregion
-
-            #region My Solution 01 - not exactly what they want (here I keep only records where the count of that value is less than "x")
-
-            //Dictionary<int, int> numsCount = new Dictionary<int, int>();
-
-            //for (int i = 0; i < arr.Length; i++)
-            //{
-            //    if (!numsCount.ContainsKey(arr[i]))
-            //    {
-            //        numsCount.Add(arr[i], 1);
-            //    }
-            //    else
-            //    {
-            //        numsCount[arr[i]]++;
-            //    }
-            //}
-
-            //List<int> ToDelete = numsCount
-            //    .Where(a => a.Value == x)
-            //    .Select(a => a.Key)
-            //    .ToList();
-
-            //int[] result = new int[3];
-            //result = arr.Where(val => !ToDelete.Contains(val)).ToArray();
-
-            //return result;
-
-            #endregion
-
-            #region from Web
-            //List<int> collection = new List<int>();
-            //collection = arr.Where((t, i) => arr.Take(i + 1).Count(s => s == t) <= x).ToList();
-
-            //return collection.ToArray();
-            #endregion
         }
+        #endregion
+
+        #region from Web
+        //public static int[] DeleteNth(int[] arr, int x)
+        //{
+        //    List<int> collection = new List<int>();
+        //    collection = arr.Where((t, i) => arr.Take(i + 1).Count(s => s == t) <= x).ToList();
+
+        //    return collection.ToArray();
+        //}
+        #endregion
+
+        #region My Solution 01 - not exactly what they want (here I keep only records where the count of that value is less than "x")
+        //public static int[] DeleteNth(int[] arr, int x)
+        //{
+        //    Dictionary<int, int> numsCount = new Dictionary<int, int>();
+
+        //    for (int i = 0; i < arr.Length; i++)
+        //    {
+        //        if (!numsCount.ContainsKey(arr[i]))
+        //        {
+        //            numsCount.Add(arr[i], 1);
+        //        }
+        //        else
+        //        {
+        //            numsCount[arr[i]]++;
+        //        }
+        //    }
+
+        //    List<int> ToDelete = numsCount
+        //        .Where(a => a.Value == x)
+        //        .Select(a => a.Key)
+        //        .ToList();
+
+        //    int[] result = new int[3];
+        //    result = arr.Where(val => !ToDelete.Contains(val)).ToArray();
+
+        //    return result;
+        //}
+        #endregion
         #endregion
 
         #region 008 - 5kyu (Moving Zeros To The End) Write an algorithm that takes an array and moves all of the zeros to the end, preserving the order of the other elements.
         //static void Main(string[] args)
         //{
-        //    foreach (var item in MoveZeroes(new int[] {1, 2, 0, 1, 0, 1, 0, 3, 0, 1}))
+        //    foreach (var item in MoveZeroes(new int[] { 1, 2, 0, 1, 0, 1, 0, 3, 0, 1 }))
         //    {
         //        Console.WriteLine(item);
         //    }
         //}
 
+        #region My Solution
         public static int[] MoveZeroes(int[] arr)
         {
-            #region My Solution
             int[] unsorted = arr.Where(x => x != 0).ToArray();
             int[] newArr = new int[arr.Length];
 
@@ -2854,23 +3228,27 @@ namespace Codewars_Console_vs19
             }
 
             return newArr;
-            #endregion
-
-            #region from Web
-            //return arr.OrderBy(x => x == 0).ToArray();
-            #endregion
         }
         #endregion
 
+        #region from Web
+        //public static int[] MoveZeroes(int[] arr)
+        //{
+        //    return arr.OrderBy(x => x == 0).ToArray();
+        //}
+        #endregion
+        #endregion
+
         #region 007 - 6kyu (Find the odd int) Given an array of integers, find the one that appears an odd number of times.
+
         //static void Main(string[] args)
         //{
         //    Console.WriteLine(find_it(new int[] { 20, 1, -1, 2, -2, 3, 3, 5, 5, 1, 2, 4, 20, 4, -1, -2, 5 }));
         //}
 
+        #region My Solution 02 - add an entry to the collection if it does not exist, or delete it if it exists - in the end there is only one - the desired entry
         public static int find_it(int[] seq)
         {
-            #region My Solution 02 - add an entry to the collection if it does not exist, or delete it if it exists - in the end there is only one - the desired entry
             HashSet<int> myNums = new HashSet<int>();
             foreach (int item in seq)
             {
@@ -2886,40 +3264,47 @@ namespace Codewars_Console_vs19
             int result = Int32.Parse(string.Join("", myNums));
 
             return result;
-
-            #endregion
-
-            #region My Solution 01 Create a dict where we count the number of repetitions for each number
-
-            //Dictionary<int, int> numsDict = new Dictionary<int, int>();
-
-            //foreach (int item in seq)
-            //{
-            //    if (!numsDict.ContainsKey(item))
-            //    {
-            //        numsDict.Add(item, 1);
-            //    }
-            //    else
-            //    {
-            //        numsDict[item]++;
-            //    }
-            //}
-            //return (from d in numsDict where d.Value % 2 != 0 select d.Key)
-            //    .FirstOrDefault();
-
-            #endregion
-
-            #region from Web 02
-            //return seq.Aggregate(0, (a, b) => a ^ b);
-            #endregion
-
-            #region from Web 01
-            //return seq.GroupBy(x => x).Single(g => g.Count() % 2 == 1).Key;
-            #endregion
         }
         #endregion
 
+        #region from Web 02
+        //public static int find_it(int[] seq)
+        //{
+        //    return seq.Aggregate(0, (a, b) => a ^ b);
+        //}
+        #endregion
+
+        #region from Web 01
+        //public static int find_it(int[] seq)
+        //{
+        //    return seq.GroupBy(x => x).Single(g => g.Count() % 2 == 1).Key;
+        //}
+        #endregion
+
+        #region My Solution 01 Create a dict where we count the number of repetitions for each number
+        //public static int find_it(int[] seq)
+        //{
+        //    Dictionary<int, int> numsDict = new Dictionary<int, int>();
+
+        //    foreach (int item in seq)
+        //    {
+        //        if (!numsDict.ContainsKey(item))
+        //        {
+        //            numsDict.Add(item, 1);
+        //        }
+        //        else
+        //        {
+        //            numsDict[item]++;
+        //        }
+        //    }
+        //    return (from d in numsDict where d.Value % 2 != 0 select d.Key)
+        //        .FirstOrDefault();
+        //}
+        #endregion
+        #endregion
+
         #region 006 - 6kyu (Split Strings) splits the string into pairs of two characters.
+
         //static void Main(string[] args)
         //{
         //    ////string[] resultArray = SplitStrings_006("abcdef");
@@ -2932,119 +3317,95 @@ namespace Codewars_Console_vs19
         //    }
         //}
 
+        #region My Solution 02
         public static string[] SplitStrings_006(string str)
         {
-            #region Regex (from Web)
-            var test = Regex.Matches(str + "_", @"\D{2}");
+            List<string> newStrArr = new List<string>();
 
-            var result = (from d in test.OfType<Match>() select d.Value).ToList();
+            for (int i = 0; i < str.Length; i += 2)
+            {
+                newStrArr.Add(i + 1 < str.Length ? str.Substring(i, 2) : (str.Substring(i, 1) + "_"));
+            }
 
-            return result.ToArray();
-            #region some regular expressions
-            //Рассмотрим вкратце некоторые элементы синтаксиса регулярных выражений:
-
-            //    ^: соответствие должно начинаться в начале строки (например, выражение @"^пр\w*" соответствует слову "привет" в строке "привет мир")
-
-            //    $: конец строки (например, выражение @"\w*ир$" соответствует слову "мир" в строке "привет мир", так как часть "ир" находится в самом конце)
-
-            //    .: знак точки определяет любой одиночный символ (например, выражение "м.р" соответствует слову "мир" или "мор")
-
-            //    *: предыдущий символ повторяется 0 и более раз
-
-            //    +: предыдущий символ повторяется 1 и более раз
-
-            //    ?: предыдущий символ повторяется 0 или 1 раз
-
-            //    \s: соответствует любому пробельному символу
-
-            //    \S: соответствует любому символу, не являющемуся пробелом
-
-            //    \w: соответствует любому алфавитно - цифровому символу
-
-            //    \W: соответствует любому не алфавитно-цифровому символу
-
-            //    \d: соответствует любой десятичной цифре
-
-            //    \D: соответствует любому символу, не являющемуся десятичной цифрой
-
-            //    Это только небольшая часть элементов.Более подробное описание синтаксиса регулярных выражений можно найти на msdn в
-            #endregion
-            #endregion
-
-            #region My Solution 02
-
-            //List<string> newStrArr = new List<string>();
-
-            //for (int i = 0; i < str.Length; i+=2)
-            //{
-            //    newStrArr.Add(i + 1 < str.Length ? str.Substring(i, 2) : (str.Substring(i, 1) + "_"));
-            //}
-
-            //return newStrArr.ToArray();
-
-            #endregion
-
-            #region My Solution 01
-
-            //int newStrLength = (str.Length % 2 == 1) ? (str.Length / 2 + 1) : (str.Length / 2);
-
-            //string[] newStrArr = new string[newStrLength];
-
-            //for (int j = 0; j < newStrArr.Length;)
-            //{
-            //    for (int i = 0; i < str.Length; i++)
-            //    {
-            //        newStrArr[j]= (i + 1 < str.Length) ? (str[i].ToString() + str[i + 1].ToString()) : newStrArr[j] = str[i].ToString() + "_";
-            //        #region то же подробно
-            //        //if (i + 1 < str.Length)
-            //        //{
-            //        //    newStrArr[j] = str[i].ToString() + str[i + 1].ToString();
-            //        //}
-            //        //else
-            //        //{
-            //        //    newStrArr[j] = str[i].ToString() + "_";
-            //        //} 
-            //        #endregion
-
-            //        j++;
-            //        i++;
-            //    }
-            //}
-
-            //return newStrArr;
-
-            #endregion
-
-            #region from Web
-
-            ////// так работает только в vs19
-            ////return Regex.Matches(str + "_", @"\w{2}").Select(x => x.Value).ToArray();
-            ////// так работает и здесь, но удаляет все пробелы
-            //return Regex.Matches(str + "_", @"\w{2}").OfType<Match>().Select(x => x.Value).ToArray();
-
-            #endregion
+            return newStrArr.ToArray();
         }
         #endregion
 
+        #region from Web (Regex)
+        //public static string[] SplitStrings_006(string str)
+        //{
+        //    ////// так работает только в vs19
+        //    ////return Regex.Matches(str + "_", @"\w{2}").Select(x => x.Value).ToArray();
+        //    ////// так работает и здесь, но удаляет все пробелы
+        //    return Regex.Matches(str + "_", @"\w{2}").OfType<Match>().Select(x => x.Value).ToArray();
+
+        //    #region to clarify
+        //    //var test = Regex.Matches(str + "_", @"\D{2}");
+
+        //    //var result = (from d in test.OfType<Match>() select d.Value).ToList();
+
+        //    //return result.ToArray();
+        //    #endregion
+        //}
+        #endregion
+
+        #region My Solution 01
+        //public static string[] SplitStrings_006(string str)
+        //{
+        //    int newStrLength = (str.Length % 2 == 1) ? (str.Length / 2 + 1) : (str.Length / 2);
+
+        //    string[] newStrArr = new string[newStrLength];
+
+        //    for (int j = 0; j < newStrArr.Length;)
+        //    {
+        //        for (int i = 0; i < str.Length; i++)
+        //        {
+        //            newStrArr[j] = (i + 1 < str.Length) ? (str[i].ToString() + str[i + 1].ToString()) : newStrArr[j] = str[i].ToString() + "_";
+        //            #region то же подробно
+        //            //if (i + 1 < str.Length)
+        //            //{
+        //            //    newStrArr[j] = str[i].ToString() + str[i + 1].ToString();
+        //            //}
+        //            //else
+        //            //{
+        //            //    newStrArr[j] = str[i].ToString() + "_";
+        //            //} 
+        //            #endregion
+
+        //            j++;
+        //            i++;
+        //        }
+        //    }
+
+        //    return newStrArr;
+        //}
+        #endregion
+        #endregion
+
         #region 005 - 7kyu (Shortest Word) given a string of words, return the length of the shortest word(s).
+
         //static void Main(string[] args)
         //{
         //    Console.WriteLine(FindShort("bitcoin take over the world maybe who knows perhaps"));
         //}
 
+        #region My Solution
         public static int FindShort(string s)
         {
-            #region My Solution
             return (from wa in s.Split(new char[] { ' ' }) orderby wa.Length select wa).FirstOrDefault().Count();
-            #endregion
-
-            #region from Web
-            //return s.Split(' ').Min(x => x.Length);
-            #endregion
         }
         #endregion
 
+        #region from Web
+        //public static int FindShort(string s)
+        //{
+        //    return s.Split(' ').Min(x => x.Length);
+        //}
+        #endregion
+        #endregion
+
         #region 004 - 7kyu (Ones and Zeros) convert the equivalent binary value to an integer.
+
         //static void Main(string[] args)
         //{
         //    Console.WriteLine(binaryArrayToNumber(new int[] { 0, 1, 1, 0 }));
@@ -3060,6 +3421,7 @@ namespace Codewars_Console_vs19
         #endregion
 
         #region 003 - 7kyu (Binary Addition) - Adds two numbers together and returns their sum in binary
+
         //static void Main(string[] args)
         //{
         //    Console.WriteLine(AddBinary(5, 8));
@@ -3069,17 +3431,18 @@ namespace Codewars_Console_vs19
         {
             return Convert.ToString((a + b), 2);
         }
-
         #endregion
 
         #region 002 - 6kyu (Take a Ten Minute Walk)
+
         //static void Main(string[] args)
         //{
         //    Console.WriteLine(IsValidWalk(new string[] { "n", "e", "s", "e", "e", "s", "w", "w", "w", "n" }));
         //}
+
+        #region My Solution
         public static bool IsValidWalk(string[] walk)
         {
-            #region My Solution
             bool result = false;
 
             if (walk.Count() == 10
@@ -3092,24 +3455,28 @@ namespace Codewars_Console_vs19
             }
 
             return result;
-            #endregion
-
-            #region from Web
-            //return walk.Count(x => x == "n") == walk.Count(x => x == "s") && walk.Count(x => x == "e") == walk.Count(x => x == "w") && walk.Length == 10;
-            #endregion
         }
         #endregion
 
+        #region from Web
+        //public static bool IsValidWalk(string[] walk)
+        //{
+        //    return walk.Count(x => x == "n") == walk.Count(x => x == "s") && walk.Count(x => x == "e") == walk.Count(x => x == "w") && walk.Length == 10;
+        //}
+        #endregion
+        #endregion
+
         #region 001 - 6kyu (Decode the Morse code)
+
         //static void Main(string[] args)
         //{
         //    Console.WriteLine(Decode("  .... . -.--   .--- ..- -.. .  "));
         //    //Console.WriteLine(Decode("  ···−−−···")); 
         //}
 
+        #region MY SOLUTION 02
         public static string Decode(string morseCode)
         {
-
             #region Creating a dictionary with Morse - for testing here (Site uses his Own)
             Dictionary<string, string> dict = new Dictionary<string, string>()
             {
@@ -3153,8 +3520,6 @@ namespace Codewars_Console_vs19
             };
             #endregion
 
-            #region MY SOLUTION 02
-
             string ResultWord = "";
 
             string[] morseWordArray = morseCode.Trim().Split(new[] { "   " }, StringSplitOptions.None);
@@ -3180,109 +3545,299 @@ namespace Codewars_Console_vs19
             }
 
             return ResultWord;
-
-            #endregion
-
-            #region  MY SOLUTION 01
-            //string morse = morseCode.Replace("   ", "@");
-            //string morseWrdsPre = morse.Replace(" ", "#");
-            //string morseWrds = morseWrdsPre.Replace(" ", "");
-
-            //string[] morseArr = morseWrds.Split(new char[] { '@' });
-
-            //for (int i = 0; i < morseArr.Length; i++)
-            //{
-            //    string[] StrWrds = morseArr[i].Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
-
-            //    foreach (var wrd in StrWrds)
-            //    {
-            //        string GotWrd = (from d in dict where d.Value == wrd select d.Key)
-            //            .FirstOrDefault()
-            //            .ToString();
-
-            //        ResultWord = ResultWord + GotWrd.ToUpper();
-            //    }
-
-            //    if (i < morseArr.Length - 1)
-            //    {
-            //        ResultWord = ResultWord + " ";
-            //    }
-            //}
-
-            //while (ResultWord.StartsWith(" "))
-            //{
-            //    ResultWord = ResultWord.Remove(0, 1);
-            //}
-
-            //return ResultWord; 
-            #endregion
-
-            #region From Web 02 - one line code!!!
-            //return string.Concat(morseCode.Trim().Replace("   ", "  ").Split().Select(s => s == "" ? " " : MorseCode.Get(s)));
-            #endregion
-
-            #region From Web 01
-
-            //////
-            #region Explanation (from Web splitted)
-            ////// Getting an array splitted by words
-            //string AAAwords = morseCode.Trim(); //// remove all unnecessary spaces at the beginning and the end of the string
-            //string[] Awords = AAAwords.Split(new[] {"   "}, StringSplitOptions.None); //// splitting the string to array BY STRING - NOT BY CHAR (needs StringSplitOptions)
-            //                                                                          /// keeping spaces (not removing unnecessary symbols)
-
-            ////// Splitting Each Word in the above Array into letters
-            //var AtranslatedWords = Awords
-            //    .Select(word => word.Split(' '))
-            //    .ToList();
-
-
-            ////// To use my morse Dictionary - do this way
-            //string ResultWord = "";
-
-            //for (int i = 0; i < AtranslatedWords.Count; i++)
-            //{
-            //    foreach (var wrd in AtranslatedWords[i])
-            //    {
-            //        string GotWrd = (from d in dict where d.Value == wrd select d.Key)
-            //            .FirstOrDefault()
-            //            .ToString();
-
-            //        ResultWord = ResultWord + GotWrd.ToUpper();
-            //    }
-
-            //    if (i < AtranslatedWords.Count - 1)
-            //    {
-            //        ResultWord = ResultWord + " ";
-            //    }
-            //}
-
-            //return ResultWord; 
-            #endregion
-
-            ////////////////////////////////////////////////////////
-            //// Getting the array of letters in morse language
-            //var words = morseCode.Trim() //// remove all unnecessary spaces at the beginning and the end of the string
-            //    .Split(new[] { "   " } //// splitting the string to array BY STRING - NOT BY CHAR
-            //        , StringSplitOptions.None //// keeping spaces (not removing unnecessary symbols)
-            //        );
-
-            ////// translating the array of words to English
-            //var translatedWords = words
-            //    .Select(word => word.Split(' '))
-            //    .Select(letters => string.Join("", letters.Select(MorseCode.Get)))
-            //    .ToList();
-
-            ////// concatenating recieved letters in List, splitting them by space
-            //return string.Join(" ", translatedWords);
-
-            #endregion
         }
+        #endregion
+
+        #region From Web 02 - one line code!!!
+        //public static string Decode(string morseCode)
+        //{
+        #region Creating a dictionary with Morse - for testing here (Site uses his Own)
+        //    Dictionary<string, string> dict = new Dictionary<string, string>()
+        //    {
+        //        {"a", string.Concat('.', '-')},
+        //        {"b", string.Concat('-', '.', '.', '.')},
+        //        {"c", string.Concat('-', '.', '-', '.')},
+        //        {"d", string.Concat('-', '.', '.')},
+        //        {"e", '.'.ToString()},
+        //        {"f", string.Concat('.', '.', '-', '.')},
+        //        {"g", string.Concat('-', '-', '.')},
+        //        {"h", string.Concat('.', '.', '.', '.')},
+        //        {"i", string.Concat('.', '.')},
+        //        {"j", string.Concat('.', '-', '-', '-')},
+        //        {"k", string.Concat('-', '.', '-')},
+        //        {"l", string.Concat('.', '-', '.', '.')},
+        //        {"m", string.Concat('-', '-')},
+        //        {"n", string.Concat('-', '.')},
+        //        {"o", string.Concat('-', '-', '-')},
+        //        {"p", string.Concat('.', '-', '-', '.')},
+        //        {"q", string.Concat('-', '-', '.', '-')},
+        //        {"r", string.Concat('.', '-', '.')},
+        //        {"s", string.Concat('.', '.', '.')},
+        //        {"t", string.Concat('-')},
+        //        {"u", string.Concat('.', '.', '-')},
+        //        {"v", string.Concat('.', '.', '.', '-')},
+        //        {"w", string.Concat('.', '-', '-')},
+        //        {"x", string.Concat('-', '.', '.', '-')},
+        //        {"y", string.Concat('-', '.', '-', '-')},
+        //        {"z", string.Concat('-', '-', '.', '.')},
+        //        {"0", string.Concat('-', '-', '-', '-', '-')},
+        //        {"1", string.Concat('.', '-', '-', '-', '-')},
+        //        {"2", string.Concat('.', '.', '-', '-', '-')},
+        //        {"3", string.Concat('.', '.', '.', '-', '-')},
+        //        {"4", string.Concat('.', '.', '.', '.', '-')},
+        //        {"5", string.Concat('.', '.', '.', '.', '.')},
+        //        {"6", string.Concat('-', '.', '.', '.', '.')},
+        //        {"7", string.Concat('-', '-', '.', '.', '.')},
+        //        {"8", string.Concat('-', '-', '-', '.', '.')},
+        //        {"9", string.Concat('-', '-', '-', '-', '.')},
+        //        {"SOS", "···−−−···".ToString()}
+        //    };
+        #endregion
+
+        //    //// working with sites dictionary - here need to create a method - I didn't, just keepeing for example
+        //    return string.Concat(morseCode.Trim().Replace("   ", "  ").Split().Select(s => s == "" ? " " : MorseCode.Get(s)));
+        //}
+        #endregion
+
+        #region From Web 01
+        //public static string Decode(string morseCode)
+        //{
+        #region Creating a dictionary with Morse - for testing here (Site uses his Own)
+        //    Dictionary<string, string> dict = new Dictionary<string, string>()
+        //    {
+        //        {"a", string.Concat('.', '-')},
+        //        {"b", string.Concat('-', '.', '.', '.')},
+        //        {"c", string.Concat('-', '.', '-', '.')},
+        //        {"d", string.Concat('-', '.', '.')},
+        //        {"e", '.'.ToString()},
+        //        {"f", string.Concat('.', '.', '-', '.')},
+        //        {"g", string.Concat('-', '-', '.')},
+        //        {"h", string.Concat('.', '.', '.', '.')},
+        //        {"i", string.Concat('.', '.')},
+        //        {"j", string.Concat('.', '-', '-', '-')},
+        //        {"k", string.Concat('-', '.', '-')},
+        //        {"l", string.Concat('.', '-', '.', '.')},
+        //        {"m", string.Concat('-', '-')},
+        //        {"n", string.Concat('-', '.')},
+        //        {"o", string.Concat('-', '-', '-')},
+        //        {"p", string.Concat('.', '-', '-', '.')},
+        //        {"q", string.Concat('-', '-', '.', '-')},
+        //        {"r", string.Concat('.', '-', '.')},
+        //        {"s", string.Concat('.', '.', '.')},
+        //        {"t", string.Concat('-')},
+        //        {"u", string.Concat('.', '.', '-')},
+        //        {"v", string.Concat('.', '.', '.', '-')},
+        //        {"w", string.Concat('.', '-', '-')},
+        //        {"x", string.Concat('-', '.', '.', '-')},
+        //        {"y", string.Concat('-', '.', '-', '-')},
+        //        {"z", string.Concat('-', '-', '.', '.')},
+        //        {"0", string.Concat('-', '-', '-', '-', '-')},
+        //        {"1", string.Concat('.', '-', '-', '-', '-')},
+        //        {"2", string.Concat('.', '.', '-', '-', '-')},
+        //        {"3", string.Concat('.', '.', '.', '-', '-')},
+        //        {"4", string.Concat('.', '.', '.', '.', '-')},
+        //        {"5", string.Concat('.', '.', '.', '.', '.')},
+        //        {"6", string.Concat('-', '.', '.', '.', '.')},
+        //        {"7", string.Concat('-', '-', '.', '.', '.')},
+        //        {"8", string.Concat('-', '-', '-', '.', '.')},
+        //        {"9", string.Concat('-', '-', '-', '-', '.')},
+        //        {"SOS", "···−−−···".ToString()}
+        //    };
+        #endregion
+
+        //    ////
+        //    #region Explanation (from Web splitted)
+        //    //// Getting an array splitted by words
+        //    string AAAwords = morseCode.Trim(); //// remove all unnecessary spaces at the beginning and the end of the string
+        //    string[] Awords = AAAwords.Split(new[] { "   " }, StringSplitOptions.None); //// splitting the string to array BY STRING - NOT BY CHAR (needs StringSplitOptions)
+        //    /// keeping spaces (not removing unnecessary symbols)
+
+        //    //// Splitting Each Word in the above Array into letters
+        //    var AtranslatedWords = Awords
+        //        .Select(word => word.Split(' '))
+        //        .ToList();
+
+        //    //// To Use my dictionary uncomment this and comment below
+        //    string ResultWord = "";
+
+        //    for (int i = 0; i < AtranslatedWords.Count; i++)
+        //    {
+        //        foreach (var wrd in AtranslatedWords[i])
+        //        {
+        //            string GotWrd = (from d in dict where d.Value == wrd select d.Key)
+        //                .FirstOrDefault()
+        //                .ToString();
+
+        //            ResultWord = ResultWord + GotWrd.ToUpper();
+        //        }
+
+        //        if (i < AtranslatedWords.Count - 1)
+        //        {
+        //            ResultWord = ResultWord + " ";
+        //        }
+        //    }
+
+        //    return ResultWord;
+        //    #endregion
+
+        //    //// To Use Site's dictionary uncomment this and comment above
+        //    //// Getting the array of letters in morse language
+        //    //var words = morseCode.Trim() //// remove all unnecessary spaces at the beginning and the end of the string
+        //    //    .Split(new[] { "   " } //// splitting the string to array BY STRING - NOT BY CHAR
+        //    //        , StringSplitOptions.None //// keeping spaces (not removing unnecessary symbols)
+        //    //        );
+
+        //    ////// translating the array of words to English
+        //    //var translatedWords = words
+        //    //    .Select(word => word.Split(' '))
+        //    //    .Select(letters => string.Join("", letters.Select(MorseCode.Get)))
+        //    //    .ToList();
+
+        //    //// concatenating recieved letters in List, splitting them by space
+        //    //return string.Join(" ", translatedWords);
+        //}
+        #endregion
+
+        #region  MY SOLUTION 01
+        //public static string Decode(string morseCode)
+        //{
+        #region Creating a dictionary with Morse - for testing here (Site uses his Own)
+        Dictionary<string, string> dict = new Dictionary<string, string>()
+            {
+                {"a", string.Concat('.', '-')},
+                {"b", string.Concat('-', '.', '.', '.')},
+                {"c", string.Concat('-', '.', '-', '.')},
+                {"d", string.Concat('-', '.', '.')},
+                {"e", '.'.ToString()},
+                {"f", string.Concat('.', '.', '-', '.')},
+                {"g", string.Concat('-', '-', '.')},
+                {"h", string.Concat('.', '.', '.', '.')},
+                {"i", string.Concat('.', '.')},
+                {"j", string.Concat('.', '-', '-', '-')},
+                {"k", string.Concat('-', '.', '-')},
+                {"l", string.Concat('.', '-', '.', '.')},
+                {"m", string.Concat('-', '-')},
+                {"n", string.Concat('-', '.')},
+                {"o", string.Concat('-', '-', '-')},
+                {"p", string.Concat('.', '-', '-', '.')},
+                {"q", string.Concat('-', '-', '.', '-')},
+                {"r", string.Concat('.', '-', '.')},
+                {"s", string.Concat('.', '.', '.')},
+                {"t", string.Concat('-')},
+                {"u", string.Concat('.', '.', '-')},
+                {"v", string.Concat('.', '.', '.', '-')},
+                {"w", string.Concat('.', '-', '-')},
+                {"x", string.Concat('-', '.', '.', '-')},
+                {"y", string.Concat('-', '.', '-', '-')},
+                {"z", string.Concat('-', '-', '.', '.')},
+                {"0", string.Concat('-', '-', '-', '-', '-')},
+                {"1", string.Concat('.', '-', '-', '-', '-')},
+                {"2", string.Concat('.', '.', '-', '-', '-')},
+                {"3", string.Concat('.', '.', '.', '-', '-')},
+                {"4", string.Concat('.', '.', '.', '.', '-')},
+                {"5", string.Concat('.', '.', '.', '.', '.')},
+                {"6", string.Concat('-', '.', '.', '.', '.')},
+                {"7", string.Concat('-', '-', '.', '.', '.')},
+                {"8", string.Concat('-', '-', '-', '.', '.')},
+                {"9", string.Concat('-', '-', '-', '-', '.')},
+                {"SOS", "···−−−···".ToString()}
+            };
+        #endregion
+
+        //    string ResultWord = "";
+
+        //    string morse = morseCode.Replace("   ", "@");
+        //    string morseWrdsPre = morse.Replace(" ", "#");
+        //    string morseWrds = morseWrdsPre.Replace(" ", "");
+
+        //    string[] morseArr = morseWrds.Split(new char[] { '@' });
+
+        //    for (int i = 0; i < morseArr.Length; i++)
+        //    {
+        //        string[] StrWrds = morseArr[i].Split(new char[] { '#' }, StringSplitOptions.RemoveEmptyEntries);
+
+        //        foreach (var wrd in StrWrds)
+        //        {
+        //            string GotWrd = (from d in dict where d.Value == wrd select d.Key)
+        //                .FirstOrDefault()
+        //                .ToString();
+
+        //            ResultWord = ResultWord + GotWrd.ToUpper();
+        //        }
+
+        //        if (i < morseArr.Length - 1)
+        //        {
+        //            ResultWord = ResultWord + " ";
+        //        }
+        //    }
+
+        //    while (ResultWord.StartsWith(" "))
+        //    {
+        //        ResultWord = ResultWord.Remove(0, 1);
+        //    }
+
+        //    return ResultWord;
+        //}
+        #endregion
         #endregion
         #endregion
     }
 }
-#region ПРИМЕРЫ
+
+#region EXAMPLES
+
+#region some regular expressions
+//Рассмотрим вкратце некоторые элементы синтаксиса регулярных выражений:
+
+//    ^: соответствие должно начинаться в начале строки (например, выражение @"^пр\w*" соответствует слову "привет" в строке "привет мир")
+
+//    $: конец строки (например, выражение @"\w*ир$" соответствует слову "мир" в строке "привет мир", так как часть "ир" находится в самом конце)
+
+//    .: знак точки определяет любой одиночный символ (например, выражение "м.р" соответствует слову "мир" или "мор")
+
+//    *: предыдущий символ повторяется 0 и более раз
+
+//    +: предыдущий символ повторяется 1 и более раз
+
+//    ?: предыдущий символ повторяется 0 или 1 раз
+
+//    \s: соответствует любому пробельному символу
+
+//    \S: соответствует любому символу, не являющемуся пробелом
+
+//    \w: соответствует любому алфавитно - цифровому символу
+
+//    \W: соответствует любому не алфавитно-цифровому символу
+
+//    \d: соответствует любой десятичной цифре
+
+//    \D: соответствует любому символу, не являющемуся десятичной цифрой
+
+//    Это только небольшая часть элементов.Более подробное описание синтаксиса регулярных выражений можно найти на msdn в
+#endregion
+
 #region цикл внутри метода - вызывает сам себя
+////// 02
+//int countNums(int a, int b)
+//{
+//    if (a >= b) return 0;
+//    return 1 + countNums(++a, b);
+//}
+//int c = countNums(3, 10);
+////// это то же самое
+//int dountNums(int a, int b)
+//{
+//    int cc = 0;
+//    while (b > a)
+//    {
+//        a++;
+//        cc++;
+//    }
+//    return cc;
+//}
+//int d = dountNums(3, 10);
+
+//// 01
 //int cellsCountByColumn(int i, int j)
 //{
 //    //// когда одно из условий соблюдено - останавливается цикл
@@ -3296,6 +3851,7 @@ namespace Codewars_Console_vs19
 //    return 1 + cellsCountByColumn(++i, j);
 //}
 #endregion
+
 #region Sorting Dictionary (Dictionary не имеет метода сортировки)
 //List<KeyValuePair<string, string>> myList = aDictionary.ToList();
 
